@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public class JiraRepositoryFactory implements RepositoryFactory {
     private static final String SERVER_INFO_PATH = "/rest/api/2/serverInfo";
+    private static final String BASE_URL_KEY = "baseUrl";
     private static final String SERVER_TITLE_KEY = "serverTitle";
 
     @Override
@@ -19,12 +20,13 @@ public class JiraRepositoryFactory implements RepositoryFactory {
         try (final InputStream stream = new URL(url, SERVER_INFO_PATH).openStream())
         {
             final JSONObject json = new JSONObject(new JSONTokener(stream));
+            String baseUrl = json.getString(BASE_URL_KEY);
             String name = json.getString(SERVER_TITLE_KEY);
             if (name == null) {
                 return Optional.empty();
             }
 
-            return Optional.of(new JiraRepository(new URL(url, "/"), name));
+            return Optional.of(new JiraRepository(new URL(baseUrl), name));
         }
         catch (final IOException e) {
             return Optional.empty();
