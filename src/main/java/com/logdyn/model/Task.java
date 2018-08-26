@@ -11,6 +11,10 @@ public class Task {
     private final StringProperty description;
     private final ObjectProperty<WorkLog> workLog;
 
+    public Task(final String id, final String title, final String description) {
+        this(id, title, description, new WorkLog());
+    }
+
     public Task(final String id, final String title, final String description, final WorkLog workLog)
     {
         this.id = id;
