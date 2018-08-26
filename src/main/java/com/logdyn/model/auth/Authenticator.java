@@ -1,7 +1,7 @@
 package com.logdyn.model.auth;
 
-import java.net.URLConnection;
+import java.net.HttpURLConnection;
 
 public interface Authenticator {
-    void authenticate(final URLConnection connection);
+    void authenticate(final HttpURLConnection connection);
 }
