@@ -20,18 +20,19 @@ public class RepositoryController {
         factories.add(new JiraRepositoryFactory());
     }
 
-    public static boolean addRepository(final URL url){
+    public static Optional<Repository> addRepository(final URL url){
         return addRepository(url, null);
     }
 
-    public static boolean addRepository(final URL url, final Authenticator auth) {
-        return factories.stream()
+    public static Optional<Repository> addRepository(final URL url, final Authenticator auth) {
+        final Optional<Repository> repo = factories.stream()
                 .map(factory -> factory.createRepository(url, auth))
                 .filter(Optional::isPresent)
                 .findAny()
-                .map(Optional::get)
-                .map(repositories::add)
-                .orElse(Boolean.FALSE);
+                .map(Optional::get);
+
+        repo.ifPresent(repositories::add);
+        return repo;
     }
 
     public static boolean removeRepository(final Repository repository)
@@ -46,9 +47,9 @@ public class RepositoryController {
     }
 
     public static Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
-        Optional<Repository> repo = getRepository(url);
-        if (repo.isPresent()) {
-            return repo.get().getTask(url);
+        Repository repo = getRepository(url).orElseGet(() -> addRepository(url).orElse(null));
+        if (repo != null) {
+            return repo.getTask(url);
         }
         return Optional.empty();
     }

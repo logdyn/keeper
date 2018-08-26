@@ -99,7 +99,7 @@ public class JiraRepository implements Repository {
             final String key = json.getString(ISSUE_ID_KEY);
             final JSONObject fields = json.getJSONObject(ISSUE_FIELDS_KEY);
             final String title = fields.getString(ISSUE_TITLE_KEY);
-            final String desc = fields.getString(ISSUE_DESC_KEY);
+            final String desc = fields.optString(ISSUE_DESC_KEY,"");
             return Optional.of(new Task(key, title, desc));
 
         } catch (final JSONException e) {
