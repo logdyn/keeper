@@ -1,5 +1,6 @@
 package com.logdyn.controllers.factories;
 
+import com.logdyn.model.auth.Authenticator;
 import com.logdyn.model.repositories.JiraRepository;
 import com.logdyn.model.repositories.Repository;
 import org.json.JSONObject;
@@ -17,6 +18,11 @@ public class JiraRepositoryFactory implements RepositoryFactory {
 
     @Override
     public Optional<Repository> createRepository(final URL url) {
+        return this.createRepository(url, null);
+    }
+
+    @Override
+    public Optional<Repository> createRepository(final URL url, final Authenticator auth) {
         try (final InputStream stream = new URL(url, SERVER_INFO_PATH).openStream())
         {
             final JSONObject json = new JSONObject(new JSONTokener(stream));
@@ -26,7 +32,7 @@ public class JiraRepositoryFactory implements RepositoryFactory {
                 return Optional.empty();
             }
 
-            return Optional.of(new JiraRepository(new URL(baseUrl), name));
+            return Optional.of(new JiraRepository(new URL(baseUrl), name, auth));
         }
         catch (final IOException e) {
             return Optional.empty();

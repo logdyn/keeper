@@ -3,6 +3,7 @@ package com.logdyn.controllers;
 import com.logdyn.controllers.factories.JiraRepositoryFactory;
 import com.logdyn.controllers.factories.RepositoryFactory;
 import com.logdyn.model.auth.AuthenticationRequiredException;
+import com.logdyn.model.auth.Authenticator;
 import com.logdyn.model.repositories.Repository;
 import com.logdyn.model.Task;
 
@@ -19,9 +20,13 @@ public class RepositoryController {
         factories.add(new JiraRepositoryFactory());
     }
 
-    public static boolean addRepository(final URL url) {
+    public static boolean addRepository(final URL url){
+        return addRepository(url, null);
+    }
+
+    public static boolean addRepository(final URL url, final Authenticator auth) {
         return factories.stream()
-                .map(factory -> factory.createRepository(url))
+                .map(factory -> factory.createRepository(url, auth))
                 .filter(Optional::isPresent)
                 .findAny()
                 .map(Optional::get)
