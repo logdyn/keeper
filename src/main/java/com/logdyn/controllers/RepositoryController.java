@@ -2,6 +2,7 @@ package com.logdyn.controllers;
 
 import com.logdyn.controllers.factories.JiraRepositoryFactory;
 import com.logdyn.controllers.factories.RepositoryFactory;
+import com.logdyn.model.auth.AuthenticationRequiredException;
 import com.logdyn.model.repositories.Repository;
 import com.logdyn.model.Task;
 
@@ -39,8 +40,11 @@ public class RepositoryController {
                 .findAny();
     }
 
-    public static Optional<Task> getTask(final URL url) {
-        return getRepository(url)
-                .flatMap(repository -> repository.getTask(url));
+    public static Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
+        Optional<Repository> repo = getRepository(url);
+        if (repo.isPresent()) {
+            return repo.get().getTask(url);
+        }
+        return Optional.empty();
     }
 }
