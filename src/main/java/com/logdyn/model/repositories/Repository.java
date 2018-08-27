@@ -14,4 +14,5 @@ public interface Repository {
     boolean isUrlMatch(final URL url);
     Optional<Task> getTask(final URL url) throws AuthenticationRequiredException;
     Optional<Task> getTask(final String id) throws AuthenticationRequiredException;
+    void submitTask(final Task task) throws AuthenticationRequiredException;
 }

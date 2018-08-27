@@ -3,7 +3,7 @@ package com.logdyn.model;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 
-class Timer {
+public class Timer {
     private LongProperty init;
     private long start;
     private long duration;
@@ -18,8 +18,11 @@ class Timer {
         this.duration = duration;
     }
 
-    public LongProperty initProperty() {
+    public LongProperty startTimeProperty() {
         return init;
+    }
+    public long getStartTime() {
+        return init.get();
     }
 
     public long getDuration() {
