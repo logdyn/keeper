@@ -41,15 +41,30 @@ public class RepositoryController {
     }
 
     public static Optional<Repository> getRepository(final URL url) {
-        return repositories.stream()
+        return Optional.ofNullable(repositories.stream()
                 .filter(repository -> repository.isUrlMatch(url))
+                .findAny()
+                .orElseGet(() -> addRepository(url).orElse(null)));
+    }
+
+    public static Optional<Repository> getRepository(final String name) {
+        return repositories.stream()
+                .filter(repository -> repository.getName().equals(name))
                 .findAny();
     }
 
     public static Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
-        Repository repo = getRepository(url).orElseGet(() -> addRepository(url).orElse(null));
-        if (repo != null) {
-            return repo.getTask(url);
+        Optional<Repository> repo = getRepository(url);
+        if (repo.isPresent()) {
+            return repo.get().getTask(url);
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<Task> getTask(final String repoName, final String taskName) throws AuthenticationRequiredException {
+        Optional<Repository> repository = getRepository(repoName);
+        if (repository.isPresent()) {
+            return repository.get().getTask(taskName);
         }
         return Optional.empty();
     }
