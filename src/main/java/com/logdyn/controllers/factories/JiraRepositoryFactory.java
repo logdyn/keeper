@@ -12,9 +12,9 @@ import java.net.URL;
 import java.util.Optional;
 
 public class JiraRepositoryFactory implements RepositoryFactory {
-    private static final String SERVER_INFO_PATH = "/rest/api/2/serverInfo";
-    private static final String BASE_URL_KEY = "baseUrl";
-    private static final String SERVER_TITLE_KEY = "serverTitle";
+    private static final String SERVER_INFO_PATH = "/rest/api/2/serverInfo"; //NON-NLS
+    private static final String BASE_URL_KEY = "baseUrl"; //NON-NLS
+    private static final String SERVER_TITLE_KEY = "serverTitle"; //NON-NLS
 
     @Override
     public Optional<Repository> createRepository(final URL url) {

@@ -12,7 +12,7 @@ public class WorkLog {
     }
 
     public WorkLog(final long start, final long duration, final String comment) {
-        this.comment = new SimpleStringProperty(this, "comment", comment);
+        this.comment = new SimpleStringProperty(this, "comment", comment); //NON-NLS
         this.timer = new Timer(start);
     }
 

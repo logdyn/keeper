@@ -5,8 +5,8 @@ import java.util.Base64;
 
 public class BasicAuthenticator implements Authenticator {
 
-    private static final String BASIC_AUTH_KEY = "Authorization";
-    private static final String BASIC_AUTH_PREFIX = "Basic ";
+    private static final String BASIC_AUTH_KEY = "Authorization"; //NON-NLS
+    private static final String BASIC_AUTH_PREFIX = "Basic "; //NON-NLS
     private final String headerValue;
 
     public BasicAuthenticator(final String username, final String password) {

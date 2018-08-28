@@ -12,7 +12,7 @@ public class AuthenticationRequiredException extends Exception{
     }
 
     public AuthenticationRequiredException(final Repository repo, final Authenticator auth) {
-        super(String.format("Authentication for repository [%s] is required", repo.getName()));
+        super(String.format("Authentication for repository [%s] is required", repo.getName())); //NON-NLS
         this.auth = auth;
         this.repo = repo;
     }

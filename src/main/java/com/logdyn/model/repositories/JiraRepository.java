@@ -22,24 +22,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class JiraRepository implements Repository {
-    private static final String API_PATH = "/rest/api/2";
-    private static final String ISSUE_PATH = API_PATH + "/issue/";
-    public static final String WORKLOG_PATH = "/worklog";
-    private static final String ISSUE_ID_KEY = "key";
-    private static final String ISSUE_FIELDS_KEY = "fields";
-    private static final String ISSUE_TITLE_KEY = "summary";
-    private static final String ISSUE_DESC_KEY = "description";
-    public static final String POST_REQUEST_METHOD = "POST";
-    public static final String CONTENT_TYPE_KEY = "Content-Type";
-    public static final String JSON_CONTENT_TYPE = "application/json";
-    public static final String JIRA_TIME_PATTERN = "yyy-MM-dd'T'HH:mm:ss.SSSxxxx";
-    public static final String WORKLOG_START_TIME_KEY = "started";
-    public static final String WORKLOG_DURATION_KEY = "timeSpentSeconds";
-    public static final String WORKLOG_DESC_KEY = "comment";
+    private static final String API_PATH = "/rest/api/2"; //NON-NLS
+    private static final String ISSUE_PATH = API_PATH + "/issue/"; //NON-NLS
+    private static final String ISSUE_BROWSER_PATH = "/browse/"; //NON-NLS
+    public static final String WORKLOG_PATH = "/worklog"; //NON-NLS
+    private static final String ISSUE_ID_KEY = "key"; //NON-NLS
+    private static final String ISSUE_FIELDS_KEY = "fields"; //NON-NLS
+    private static final String ISSUE_TITLE_KEY = "summary"; //NON-NLS
+    private static final String ISSUE_DESC_KEY = "description"; //NON-NLS
+    public static final String POST_REQUEST_METHOD = "POST"; //NON-NLS
+    public static final String CONTENT_TYPE_KEY = "Content-Type"; //NON-NLS
+    public static final String JSON_CONTENT_TYPE = "application/json"; //NON-NLS
+    public static final DateTimeFormatter JIRA_TIME_FORMAT = DateTimeFormatter.ofPattern("yyy-MM-dd'T'HH:mm:ss.SSSxxxx"); //NON-NLS
+    public static final String WORKLOG_START_TIME_KEY = "started"; //NON-NLS
+    public static final String WORKLOG_DURATION_KEY = "timeSpentSeconds"; //NON-NLS
+    public static final String WORKLOG_DESC_KEY = "comment"; //NON-NLS
 
     private String name;
     private URL url;
-    private Optional<Authenticator> auth;
+    private Authenticator auth;
 
     public JiraRepository(final URL url, final String name) {
         this(url, name, null);
@@ -48,7 +49,7 @@ public class JiraRepository implements Repository {
     public JiraRepository(final URL url, final String name, final Authenticator auth) {
         this.url = url;
         this.name = name;
-        this.auth = Optional.ofNullable(auth);
+        this.auth = auth;
     }
 
     @Override
@@ -63,7 +64,7 @@ public class JiraRepository implements Repository {
 
     @Override
     public void setAuthenticator(final Authenticator auth) {
-        this.auth = Optional.ofNullable(auth);
+        this.auth = auth;
     }
 
     @Override
@@ -89,7 +90,9 @@ public class JiraRepository implements Repository {
     public Optional<Task> getTask(final String id) throws AuthenticationRequiredException {
         try {
             final HttpURLConnection conn = (HttpURLConnection) new URL(this.url, ISSUE_PATH + id).openConnection();
-            this.auth.ifPresent(auth -> auth.authenticate(conn));
+            if (this.auth != null) {
+                auth.authenticate(conn);
+            };
             final int resCode = conn.getResponseCode();
             if (resCode == 200) {
                 return createTask(conn);
@@ -97,7 +100,7 @@ public class JiraRepository implements Repository {
             else if (resCode == 401)
             {
                 //* Authentication
-                throw new AuthenticationRequiredException(this, this.auth.orElse(null));
+                throw new AuthenticationRequiredException(this, this.auth);
             }
         }
         catch (final IOException ioe){
@@ -113,7 +116,7 @@ public class JiraRepository implements Repository {
             final JSONObject fields = json.getJSONObject(ISSUE_FIELDS_KEY);
             final String title = fields.getString(ISSUE_TITLE_KEY);
             final String desc = fields.optString(ISSUE_DESC_KEY,"");
-            return Optional.of(new Task(key, title, desc, conn.getURL()));
+            return Optional.of(new Task(key, title, desc, new URL(this.url, ISSUE_BROWSER_PATH + key)));
 
         } catch (final JSONException e) {
             e.printStackTrace();
@@ -126,7 +129,9 @@ public class JiraRepository implements Repository {
     public void submitTask(final Task task) throws AuthenticationRequiredException {
         try {
             final HttpURLConnection conn = (HttpURLConnection) new URL(this.url, ISSUE_PATH + task.getId() + WORKLOG_PATH).openConnection();
-            this.auth.ifPresent(auth -> auth.authenticate(conn));
+            if (this.auth != null) {
+                auth.authenticate(conn);
+            };
             conn.setRequestMethod(POST_REQUEST_METHOD);
             conn.setDoOutput(true);
             conn.setRequestProperty(CONTENT_TYPE_KEY, JSON_CONTENT_TYPE);
@@ -136,7 +141,7 @@ public class JiraRepository implements Repository {
             }
             final int resCode = conn.getResponseCode();
             if (resCode == 401){
-                throw new AuthenticationRequiredException(this, this.auth.orElse(null));
+                throw new AuthenticationRequiredException(this, this.auth);
             }
             else if(resCode != 201){
                 final JSONObject errorJson = new JSONObject(new JSONTokener(conn.getErrorStream()));
@@ -150,10 +155,9 @@ public class JiraRepository implements Repository {
     private JSONObject toJson(final WorkLog workLog)
     {
         final JSONObject json = new JSONObject();
-        Instant instant = Instant.ofEpochMilli(workLog.getTimer().getStartTime());
-        ZonedDateTime dateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.systemDefault());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(JIRA_TIME_PATTERN);
-        String formattedDateTime = formatter.format(dateTime);
+        final Instant instant = Instant.ofEpochMilli(workLog.getTimer().getStartTime());
+        final ZonedDateTime dateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.systemDefault());
+        final String formattedDateTime = JIRA_TIME_FORMAT.format(dateTime);
         json.put(WORKLOG_START_TIME_KEY, formattedDateTime);
         json.put(WORKLOG_DURATION_KEY, workLog.getTimer().getDuration() / 1000);
         json.put(WORKLOG_DESC_KEY, workLog.getComment());
