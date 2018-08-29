@@ -4,6 +4,7 @@ import com.logdyn.model.Task;
 import com.logdyn.model.WorkLog;
 import com.logdyn.model.auth.AuthenticationRequiredException;
 import com.logdyn.model.auth.Authenticator;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -22,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class JiraRepository implements Repository {
+    private static final Logger LOGGER = Logger.getLogger(JiraRepository.class);
     private static final String API_PATH = "/rest/api/2"; //NON-NLS
     private static final String ISSUE_PATH = API_PATH + "/issue/"; //NON-NLS
     private static final String ISSUE_BROWSER_PATH = "/browse/"; //NON-NLS
@@ -104,6 +106,7 @@ public class JiraRepository implements Repository {
             }
         }
         catch (final IOException ioe){
+            LOGGER.debug(String.format("IOException when getting task '%s' from Jira Repository '%s'", id, this.name), ioe);
             throw new UncheckedIOException(ioe);
         }
         return Optional.empty();
@@ -119,10 +122,9 @@ public class JiraRepository implements Repository {
             return Optional.of(new Task(key, title, desc, new URL(this.url, ISSUE_BROWSER_PATH + key)));
 
         } catch (final JSONException e) {
-            e.printStackTrace();
+            LOGGER.debug(String.format("Exception parsing JSON in createTask() of Jira Repository '%s'", this.name), e);
             return Optional.empty();
         }
-
     }
 
     @Override
@@ -148,6 +150,7 @@ public class JiraRepository implements Repository {
                 throw new IllegalArgumentException(resCode + ": " + errorJson);
             }
         } catch (final IOException ioe) {
+            LOGGER.debug(String.format("IOException when submitting change to task '%s' in Jira Repository '%s'", task.getId(), this.name), ioe);
             throw new UncheckedIOException(ioe);
         }
     }
