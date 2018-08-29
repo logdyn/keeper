@@ -3,6 +3,7 @@ package com.logdyn.controllers.factories;
 import com.logdyn.model.auth.Authenticator;
 import com.logdyn.model.repositories.JiraRepository;
 import com.logdyn.model.repositories.Repository;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -12,6 +13,7 @@ import java.net.URL;
 import java.util.Optional;
 
 public class JiraRepositoryFactory implements RepositoryFactory {
+    private static final Logger LOGGER = Logger.getLogger(JiraRepositoryFactory.class);
     private static final String SERVER_INFO_PATH = "/rest/api/2/serverInfo"; //NON-NLS
     private static final String BASE_URL_KEY = "baseUrl"; //NON-NLS
     private static final String SERVER_TITLE_KEY = "serverTitle"; //NON-NLS
@@ -35,6 +37,7 @@ public class JiraRepositoryFactory implements RepositoryFactory {
             return Optional.of(new JiraRepository(new URL(baseUrl), name, auth));
         }
         catch (final IOException e) {
+            LOGGER.debug(String.format("Could not create JIRA Repository from URL: %s", url), e);
             return Optional.empty();
         }
     }
