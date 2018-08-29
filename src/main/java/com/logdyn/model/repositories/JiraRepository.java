@@ -24,7 +24,6 @@ import java.util.Optional;
 
 public class JiraRepository implements Repository {
     private static final Logger LOGGER = Logger.getLogger(JiraRepository.class);
-
     private static final String API_PATH = "/rest/api/2"; //NON-NLS
     private static final String ISSUE_PATH = API_PATH + "/issue/"; //NON-NLS
     private static final String ISSUE_BROWSER_PATH = "/browse/"; //NON-NLS
