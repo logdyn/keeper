@@ -5,6 +5,8 @@ import com.logdyn.model.auth.AuthenticationRequiredException;
 import com.logdyn.model.auth.Authenticator;
 
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +29,7 @@ public abstract class Repository {
 
     public String getName() { return this.name; }
     public URL getUrl() { return this.url; }
-    void setAuthenticator(final Authenticator auth) { this.auth = auth; }
+    public void setAuthenticator(final Authenticator auth) { this.auth = auth; }
     public boolean isUrlMatch(final URL url) { return this.url.getHost().equals(url.getHost()); }
 
     public Optional<Task> getTask(URL url) throws AuthenticationRequiredException {
@@ -49,4 +51,8 @@ public abstract class Repository {
     abstract String getTaskId(final URL url);
     abstract void submitTask(final Task task) throws AuthenticationRequiredException;
     abstract Optional<Task> getRemoteTask(final String id) throws AuthenticationRequiredException;
+
+    public Collection<Task> getTasks() {
+        return Collections.unmodifiableCollection(tasks.values());
+    }
 }

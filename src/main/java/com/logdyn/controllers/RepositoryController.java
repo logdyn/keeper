@@ -2,13 +2,13 @@ package com.logdyn.controllers;
 
 import com.logdyn.controllers.factories.JiraRepositoryFactory;
 import com.logdyn.controllers.factories.RepositoryFactory;
-import com.logdyn.model.auth.AuthenticationRequiredException;
-import com.logdyn.model.auth.Authenticator;
-import com.logdyn.model.repositories.Repository;
 import com.logdyn.model.Task;
+import com.logdyn.model.auth.AuthenticationRequiredException;
+import com.logdyn.model.repositories.Repository;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -24,9 +24,9 @@ public class RepositoryController {
         return addRepository(url, null);
     }
 
-    public static Optional<Repository> addRepository(final URL url, final Authenticator auth) {
+    public static Optional<Repository> addRepository(final URL url, final String name) {
         final Optional<Repository> repo = factories.stream()
-                .map(factory -> factory.createRepository(url, auth))
+                .map(factory -> factory.createRepository(url, name))
                 .filter(Optional::isPresent)
                 .findAny()
                 .map(Optional::get);
@@ -67,5 +67,13 @@ public class RepositoryController {
             return repository.get().getTask(taskName);
         }
         return Optional.empty();
+    }
+
+    public static Collection<Repository> getRepositories() {
+        return Collections.unmodifiableCollection(repositories);
+    }
+
+    public static void addRepositories(final Collection<Repository> repositories) {
+        RepositoryController.repositories.addAll(repositories);
     }
 }
