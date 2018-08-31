@@ -107,7 +107,7 @@ public class JiraRepository implements Repository {
             }
         }
         catch (final IOException ioe){
-            LOGGER.error(String.format("IOException when getting Task '%s' from Jira Repository '%s'", id, this.name), ioe);
+            LOGGER.debug(String.format("IOException when getting Task '%s' from Jira Repository '%s'", id, this.name), ioe);
             throw new UncheckedIOException(ioe);
         }
         return Optional.empty();
@@ -123,7 +123,7 @@ public class JiraRepository implements Repository {
             return Optional.of(new Task(key, title, desc, new URL(this.url, ISSUE_BROWSER_PATH + key)));
 
         } catch (final JSONException e) {
-            LOGGER.error(String.format("Exception parsing JSON in createTask() of Jira Repository '%s'", this.name), e);
+            LOGGER.debug(String.format("Exception parsing JSON in createTask() of Jira Repository '%s'", this.name), e);
             return Optional.empty();
         }
     }
@@ -151,7 +151,7 @@ public class JiraRepository implements Repository {
                 throw new IllegalArgumentException(resCode + ": " + errorJson);
             }
         } catch (final IOException ioe) {
-            LOGGER.error(String.format("IOException when submitting WorkLog to Task '%s' in Jira Repository '%s'", task.getId(), this.name), ioe);
+            LOGGER.debug(String.format("IOException when submitting WorkLog to Task '%s' in Jira Repository '%s'", task.getId(), this.name), ioe);
             throw new UncheckedIOException(ioe);
         }
     }
