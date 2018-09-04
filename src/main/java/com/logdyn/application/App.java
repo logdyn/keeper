@@ -15,7 +15,7 @@ import java.util.Collection;
 public class App {
 
     private static final Collection<Command> commands = new ArrayList<>();
-    private static Command HELP_COMMAND = new HelpCommand();
+    private static Command HELP_COMMAND = new HelpCommand(commands);
     private static String VERSION = "0.5.0";
 
     static {

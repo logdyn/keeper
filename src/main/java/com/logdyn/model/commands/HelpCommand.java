@@ -3,9 +3,15 @@ package com.logdyn.model.commands;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 
 public class HelpCommand implements Command {
     private static final String HELP_URL = "http://github.com/logdyn/keeper/wiki";
+    private final Collection<Command> commands;
+
+    public HelpCommand(final Collection<Command> commands) {
+        this.commands = commands;
+    }
 
     @Override
     public void execute(final String... args) {
