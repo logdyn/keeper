@@ -68,7 +68,19 @@ public final class StorageController {
     }
 
     public static void open() {
-
+        final File file = new File(FILEPATH);
+        final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        try {
+            final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(file);
+            doc = StorageController.adapt(doc);
+            final Collection<Repository> repositories = new DocumentParser(doc).parse();
+            RepositoryController.addRepositories(repositories);
+        } catch (final ParserConfigurationException | SAXException e) {
+            throw new RuntimeException(e);
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 
     private static Document adapt(final Document document) {
