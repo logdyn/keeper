@@ -3,6 +3,7 @@ package com.logdyn.application;
 import com.logdyn.model.commands.Command;
 import com.logdyn.model.commands.ExitCommand;
 import com.logdyn.model.commands.HelpCommand;
+import javafx.application.Application;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,25 +25,36 @@ public class App {
     }
 
     public static void main(final String... args) {
+        if (args.length == 0) {
+            Application.launch(FxApplication.class, args);
+        } else if (args[0].equals("-i")) {
+            interactive();
+        } else {
+            execute(args);
+        }
+    }
 
+    private static void interactive() {
         System.out.println(String.format("Keeper: v%s", VERSION));
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
             //noinspection InfiniteLoopStatement
             while (true) {
-                String line = reader.readLine();
-                final String[] split = line.split("\\s");
-                commands.stream()
-                        .filter(command -> command.getName().equalsIgnoreCase(split[0]))
-                        .findAny()
-                        .orElse(HELP_COMMAND)
-                        .execute(Arrays.copyOfRange(split, 1, split.length));
+                final String[] args = reader.readLine().split("\\s");
+                execute(args);
             }
         } catch (IOException e) {
             e.printStackTrace();
             //? TODO save and exit?
         }
+    }
+
+    private static void execute(final String[] args) {
+        commands.stream()
+                .filter(command -> command.getName().equalsIgnoreCase(args[0]))
+                .findAny()
+                .orElse(HELP_COMMAND)
+                .execute(Arrays.copyOfRange(args, 1, args.length));
     }
 }
