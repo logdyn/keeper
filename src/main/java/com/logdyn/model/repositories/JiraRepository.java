@@ -74,7 +74,7 @@ public class JiraRepository extends Repository {
             }
         }
         catch (final IOException ioe){
-            LOGGER.debug(String.format("IOException when getting task '%s' from Jira Repository '%s'", id, this.name), ioe);
+            LOGGER.debug(String.format("IOException when getting Task '%s' from Jira Repository '%s'", id, this.name), ioe);
             throw new UncheckedIOException(ioe);
         }
         return Optional.empty();
@@ -96,7 +96,7 @@ public class JiraRepository extends Repository {
     }
 
     @Override
-    public void submitTask(final Task task) throws AuthenticationRequiredException {
+    public void submitWorkLog(final Task task) throws AuthenticationRequiredException {
         try {
             final HttpURLConnection conn = (HttpURLConnection) new URL(this.url, ISSUE_PATH + task.getId() + WORKLOG_PATH).openConnection();
             if (this.auth != null) {
@@ -118,7 +118,7 @@ public class JiraRepository extends Repository {
                 throw new IllegalArgumentException(resCode + ": " + errorJson);
             }
         } catch (final IOException ioe) {
-            LOGGER.debug(String.format("IOException when submitting change to task '%s' in Jira Repository '%s'", task.getId(), this.name), ioe);
+            LOGGER.debug(String.format("IOException when submitting WorkLog to Task '%s' in Jira Repository '%s'", task.getId(), this.name), ioe);
             throw new UncheckedIOException(ioe);
         }
     }
