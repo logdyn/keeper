@@ -12,7 +12,7 @@
     <url>http://github.com/logdyn/keeper</url>
 
     <organization>
-        <name>Logdyn</name>
+        <name>logdyn</name>
         <url>http://github.com/logdyn</url>
     </organization>
 
@@ -77,7 +77,7 @@
                     <finalName>${shadedName}</finalName>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.logdyn.application.App</mainClass>
+                            <mainClass>com.logdyn.Main</mainClass>
                         </transformer>
                     </transformers>
                     <createDependencyReducedPom>false</createDependencyReducedPom>

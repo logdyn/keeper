@@ -1,9 +1,8 @@
-package com.logdyn.application;
+package com.logdyn.ui.console;
 
-import com.logdyn.model.commands.Command;
-import com.logdyn.model.commands.ExitCommand;
-import com.logdyn.model.commands.HelpCommand;
-import javafx.application.Application;
+import com.logdyn.ui.console.commands.Command;
+import com.logdyn.ui.console.commands.ExitCommand;
+import com.logdyn.ui.console.commands.HelpCommand;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -13,8 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class App {
-    private static final Logger LOGGER = Logger.getLogger(App.class);
+public class ConsoleApplication {
+
+    private static final Logger LOGGER = Logger.getLogger(ConsoleApplication.class);
     private static final Collection<Command> commands = new ArrayList<>();
     private static Command HELP_COMMAND = new HelpCommand(commands);
     private static String VERSION = "0.5.0";
@@ -26,9 +26,7 @@ public class App {
     }
 
     public static void main(final String... args) {
-        if (args.length == 0) {
-            Application.launch(FxApplication.class, args);
-        } else if (args[0].equals("-i")) {
+        if (args[0].equals("-i")) {
             interactive();
         } else {
             execute(args);

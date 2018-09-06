@@ -1,4 +1,4 @@
-package com.logdyn.model.auth;
+package com.logdyn.core.authentication;
 
 import java.net.HttpURLConnection;
 import java.util.Base64;

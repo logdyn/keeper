@@ -1,4 +1,4 @@
-package com.logdyn.model.commands;
+package com.logdyn.ui.console.commands;
 
 public class ExitCommand implements Command {
     @Override
