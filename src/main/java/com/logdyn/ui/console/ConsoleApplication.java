@@ -2,6 +2,7 @@ package com.logdyn.ui.console;
 
 import com.logdyn.SystemConfig;
 import com.logdyn.ui.console.commands.Command;
+import com.logdyn.ui.console.commands.DefaultCommand;
 import com.logdyn.ui.console.commands.ExitCommand;
 import com.logdyn.ui.console.commands.HelpCommand;
 import com.logdyn.ui.console.commands.VersionCommand;
@@ -18,7 +19,7 @@ public class ConsoleApplication {
 
     private static final Logger LOGGER = Logger.getLogger(ConsoleApplication.class);
     private static final Collection<Command> commands = new ArrayList<>();
-    private static Command HELP_COMMAND = new HelpCommand(commands);
+    private static HelpCommand HELP_COMMAND = new HelpCommand(commands);
 
     static {
         //TODO add commands
@@ -36,7 +37,7 @@ public class ConsoleApplication {
     }
 
     private static void interactive() {
-        System.out.println(String.format("Keeper: %s", SystemConfig.VERSION));
+        System.out.printf("Keeper: %s%n", SystemConfig.VERSION);
         final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
@@ -52,10 +53,14 @@ public class ConsoleApplication {
     }
 
     private static void execute(final String[] args) {
-        commands.stream()
-                .filter(command -> command.getName().equalsIgnoreCase(args[0]))
-                .findAny()
-                .orElse(HELP_COMMAND)
-                .execute(Arrays.copyOfRange(args, 1, args.length));
+        if (args.length > 1 && HELP_COMMAND.getNames().contains(args[1].toLowerCase())) {
+            HELP_COMMAND.execute(args);
+        } else {
+            commands.stream()
+                    .filter(command -> command.getNames().contains(args[0].toLowerCase()))
+                    .findAny()
+                    .orElseGet(() -> new DefaultCommand(args[0]))
+                    .execute(Arrays.copyOfRange(args, 1, args.length));
+        }
     }
 }

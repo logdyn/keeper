@@ -5,7 +5,9 @@ import org.apache.log4j.Logger;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 
 public class HelpCommand implements Command {
@@ -19,6 +21,31 @@ public class HelpCommand implements Command {
 
     @Override
     public void execute(final String... args) {
+        if (args.length == 0) {
+            this.commands.forEach(this::printHelp);
+        } else if (args[0].equalsIgnoreCase("web")) {
+            openBrowser();
+        } else {
+            final Optional<Command> command = this.commands.stream()
+                    .filter(c -> c.getNames().contains(args[0].toLowerCase()))
+                    .findAny();
+            if (command.isPresent())
+            {
+                command.ifPresent(this::printHelp);
+            }
+            else
+            {
+                DefaultCommand.execute(args[0]);
+            }
+        }
+    }
+
+    private void printHelp(final Command command){
+        System.out.printf("[%s] %s - %s%n", String.join(" | ", command.getNames()), command.getDescription(), command.getHelp());
+    }
+
+    private void openBrowser()
+    {
         if (Desktop.isDesktopSupported()
                 && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
             try {
@@ -32,12 +59,22 @@ public class HelpCommand implements Command {
                 Thread.currentThread().interrupt();
             }
         } else {
-            System.out.println(String.format("Help page can be found at %s", HELP_URL));
+            System.out.printf("Help page can be found at %s%n", HELP_URL);
         }
     }
 
     @Override
-    public String getName() {
-        return "help";
+    public Collection<String> getNames() {
+        return Arrays.asList("help", "--help", "/?");
+    }
+
+    @Override
+    public String getDescription() {
+        return "[<command>]";
+    }
+
+    @Override
+    public String getHelp() {
+        return "prints help text";
     }
 }
