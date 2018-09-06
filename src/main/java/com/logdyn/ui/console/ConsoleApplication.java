@@ -1,8 +1,10 @@
 package com.logdyn.ui.console;
 
+import com.logdyn.SystemConfig;
 import com.logdyn.ui.console.commands.Command;
 import com.logdyn.ui.console.commands.ExitCommand;
 import com.logdyn.ui.console.commands.HelpCommand;
+import com.logdyn.ui.console.commands.VersionCommand;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -17,12 +19,12 @@ public class ConsoleApplication {
     private static final Logger LOGGER = Logger.getLogger(ConsoleApplication.class);
     private static final Collection<Command> commands = new ArrayList<>();
     private static Command HELP_COMMAND = new HelpCommand(commands);
-    private static String VERSION = "0.5.0";
 
     static {
         //TODO add commands
         commands.add(HELP_COMMAND);
         commands.add(new ExitCommand());
+        commands.add(new VersionCommand());
     }
 
     public static void main(final String... args) {
@@ -34,7 +36,7 @@ public class ConsoleApplication {
     }
 
     private static void interactive() {
-        System.out.println(String.format("Keeper: v%s", VERSION));
+        System.out.println(String.format("Keeper: %s", SystemConfig.VERSION));
         final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         try {

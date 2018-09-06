@@ -58,7 +58,7 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <filtering>true</filtering>
+                <filtering>false</filtering>
             </resource>
         </resources>
         <plugins>
@@ -77,7 +77,10 @@
                     <finalName>${shadedName}</finalName>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.logdyn.Main</mainClass>
+                            <manifestEntries>
+                                <Main-Class>com.logdyn.Main</Main-Class>
+                                <Implementation-Version>${version}</Implementation-Version>
+                            </manifestEntries>
                         </transformer>
                     </transformers>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
