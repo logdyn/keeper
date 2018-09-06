@@ -1,4 +1,4 @@
-package com.logdyn.application;
+package com.logdyn.ui.javafx;
 
 import javafx.application.Application;
 import javafx.stage.Stage;

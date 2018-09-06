@@ -1,8 +1,8 @@
-package com.logdyn.model.repositories;
+package com.logdyn.core.repository;
 
-import com.logdyn.model.Task;
-import com.logdyn.model.auth.AuthenticationRequiredException;
-import com.logdyn.model.auth.Authenticator;
+import com.logdyn.core.task.Task;
+import com.logdyn.core.authentication.AuthenticationRequiredException;
+import com.logdyn.core.authentication.Authenticator;
 
 import java.net.URL;
 import java.util.Optional;

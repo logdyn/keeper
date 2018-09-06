@@ -1,4 +1,4 @@
-package com.logdyn.model;
+package com.logdyn.core.task;
 
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;

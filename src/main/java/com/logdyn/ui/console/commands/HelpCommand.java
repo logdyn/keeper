@@ -1,4 +1,4 @@
-package com.logdyn.model.commands;
+package com.logdyn.ui.console.commands;
 
 import org.apache.log4j.Logger;
 

@@ -1,8 +1,8 @@
-package com.logdyn.controllers.factories;
+package com.logdyn.core.repository.factories;
 
-import com.logdyn.model.auth.Authenticator;
-import com.logdyn.model.repositories.JiraRepository;
-import com.logdyn.model.repositories.Repository;
+import com.logdyn.core.authentication.Authenticator;
+import com.logdyn.core.repository.JiraRepository;
+import com.logdyn.core.repository.Repository;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONTokener;

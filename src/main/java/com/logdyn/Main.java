@@ -1,8 +1,9 @@
-package com.logdyn.application;
+package com.logdyn;
 
-import com.logdyn.model.commands.Command;
-import com.logdyn.model.commands.ExitCommand;
-import com.logdyn.model.commands.HelpCommand;
+import com.logdyn.ui.javafx.FxApplication;
+import com.logdyn.ui.console.commands.Command;
+import com.logdyn.ui.console.commands.ExitCommand;
+import com.logdyn.ui.console.commands.HelpCommand;
 import javafx.application.Application;
 import org.apache.log4j.Logger;
 
@@ -13,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class App {
-    private static final Logger LOGGER = Logger.getLogger(App.class);
+public class Main {
+    private static final Logger LOGGER = Logger.getLogger(Main.class);
     private static final Collection<Command> commands = new ArrayList<>();
     private static Command HELP_COMMAND = new HelpCommand(commands);
     private static String VERSION = "0.5.0";

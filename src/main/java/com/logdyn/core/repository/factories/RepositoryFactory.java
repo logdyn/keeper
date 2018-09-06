@@ -1,7 +1,7 @@
-package com.logdyn.controllers.factories;
+package com.logdyn.core.repository.factories;
 
-import com.logdyn.model.auth.Authenticator;
-import com.logdyn.model.repositories.Repository;
+import com.logdyn.core.authentication.Authenticator;
+import com.logdyn.core.repository.Repository;
 
 import java.net.URL;
 import java.util.Optional;
