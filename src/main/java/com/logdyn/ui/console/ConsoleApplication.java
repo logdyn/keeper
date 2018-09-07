@@ -53,6 +53,7 @@ public class ConsoleApplication {
     }
 
     private static void execute(final String[] args) {
+        //If second argument is help
         if (args.length > 1 && HELP_COMMAND.getNames().contains(args[1].toLowerCase())) {
             HELP_COMMAND.execute(args);
         } else {
