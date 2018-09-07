@@ -41,6 +41,7 @@ public class HelpCommand implements Command {
     }
 
     private void printHelp(final Command command){
+        //e.g. [help | --help | /?] [<command>] - prints help text
         System.out.printf("[%s] %s - %s%n", String.join(" | ", command.getNames()), command.getDescription(), command.getHelp());
     }
 
