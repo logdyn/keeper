@@ -31,7 +31,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <shadedName>${project.artifactId}-${project.version}</shadedName>
+        <finalName>${project.artifactId}</finalName>
     </properties>
 
     <dependencies>
@@ -55,6 +55,7 @@
     </dependencies>
 
     <build>
+        <finalName>${finalName}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -74,12 +75,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <finalName>${shadedName}</finalName>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <manifestEntries>
                                 <Main-Class>com.logdyn.Main</Main-Class>
-                                <Implementation-Version>${version}</Implementation-Version>
+                                <Implementation-Version>${project.version}</Implementation-Version>
                             </manifestEntries>
                         </transformer>
                     </transformers>
