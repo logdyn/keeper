@@ -3,20 +3,15 @@ package com.logdyn.ui.console.commands;
 import com.logdyn.SystemConfig;
 import com.logdyn.ui.console.ConsoleApplication;
 import org.apache.log4j.Logger;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 @Command(name = "keeper",
-        description = "Entry point for the Keeper command line",
-        mixinStandardHelpOptions = true,
-        subcommands = {CommandLine.HelpCommand.class},
-        versionProvider = com.logdyn.SystemConfig.class)
-public class KeeperCommand implements Runnable {
+        description = "Entry point for the Keeper command line")
+public class KeeperCommand extends CliCommand {
     private static final Logger LOGGER = Logger.getLogger(KeeperCommand.class);
 
     private static boolean INTERACTIVE_MODE;
@@ -35,7 +30,7 @@ public class KeeperCommand implements Runnable {
                     System.out.print("> ");
                     final String[] args = reader.readLine().split("\\s");
                     ConsoleApplication.main(args);
-                } catch (final IOException e) {
+                } catch (final Exception e) {
                     LOGGER.error(e);
                 }
             }

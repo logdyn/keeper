@@ -8,6 +8,7 @@ import com.logdyn.core.task.Task;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -50,6 +51,10 @@ public class RepositoryController {
         return repositories.stream()
                 .filter(repository -> repository.getName().equals(name))
                 .findAny();
+    }
+
+    public static Collection<Repository> getRepositories() {
+        return Collections.unmodifiableCollection(repositories);
     }
 
     public static Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
