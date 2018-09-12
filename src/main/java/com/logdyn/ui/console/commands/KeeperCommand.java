@@ -1,13 +1,44 @@
 package com.logdyn.ui.console.commands;
 
+import com.logdyn.SystemConfig;
+import com.logdyn.ui.console.ConsoleApplication;
+import org.apache.log4j.Logger;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
-@Command(description = "Entry point for the Keeper command line", name = "keeper", mixinStandardHelpOptions = true, subcommands = {CommandLine.HelpCommand.class}, version = "Keeper version: Dev")
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+@Command(name = "keeper",
+        description = "Entry point for the Keeper command line",
+        mixinStandardHelpOptions = true,
+        subcommands = {CommandLine.HelpCommand.class},
+        versionProvider = com.logdyn.SystemConfig.class)
 public class KeeperCommand implements Runnable {
+    private static final Logger LOGGER = Logger.getLogger(KeeperCommand.class);
+
+    private static boolean INTERACTIVE_MODE;
+
+    @Option(names={"-i", "--interactive"}, description = "Run keeper in interactive mode")
+    private boolean interactiveFlag = false;
 
     @Override
     public void run() {
-        //NOOP
+        if (interactiveFlag && !INTERACTIVE_MODE) {
+            INTERACTIVE_MODE = true;
+            System.out.printf("Keeper: %s%n", SystemConfig.VERSION);
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            while (true){
+                try{
+                    System.out.print("> ");
+                    final String[] args = reader.readLine().split("\\s");
+                    ConsoleApplication.main(args);
+                } catch (final IOException e) {
+                    LOGGER.error(e);
+                }
+            }
+        }
     }
 }

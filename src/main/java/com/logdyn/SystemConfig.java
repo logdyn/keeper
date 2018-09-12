@@ -1,8 +1,10 @@
 package com.logdyn;
 
+import picocli.CommandLine.IVersionProvider;
+
 import java.util.Objects;
 
-public final class SystemConfig {
+public final class SystemConfig implements IVersionProvider {
 
     public static final String VERSION;
 
@@ -10,7 +12,8 @@ public final class SystemConfig {
         VERSION = Objects.toString(SystemConfig.class.getPackage().getImplementationVersion(), "Dev"); //NON-NLS
     }
 
-    private SystemConfig() {
-        throw new AssertionError("Cannot instantiate a utility class");
+    @Override
+    public String[] getVersion() throws Exception {
+        return new String[]{VERSION};
     }
 }
