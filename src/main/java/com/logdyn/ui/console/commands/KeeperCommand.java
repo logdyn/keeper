@@ -19,6 +19,9 @@ public class KeeperCommand extends CliCommand {
     @Option(names={"-i", "--interactive"}, description = "Run keeper in interactive mode")
     private boolean interactiveFlag = false;
 
+    @Option(names = { "-V", "--version" }, versionHelp = true, description = "displays the program version")
+    private boolean versionRequested = false;
+
     @Override
     public void run() {
         if (interactiveFlag && !INTERACTIVE_MODE) {

@@ -15,10 +15,10 @@ import java.util.Optional;
 @Command(name = "list", description = "Lists repositories")
 public class RepositoryListCommand extends CliCommand {
 
-    @Option(names = "-n", description = "Get all repositories with matching name")
+    @Option(names = "-n", description = "Get all repositories with matching name", paramLabel = "REPOSITORY_NAME")
     private List<String> repositoryName = new ArrayList<>();
 
-    @Option(names = "-u", description = "Get all repositories with matching URL")
+    @Option(names = "-u", description = "Get all repositories with matching URL", paramLabel = "REPOSITORY_URL")
     private List<URL> repositoryUrl = new ArrayList<>();
 
     @Override
