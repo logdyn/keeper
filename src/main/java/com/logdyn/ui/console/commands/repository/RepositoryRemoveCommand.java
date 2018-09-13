@@ -30,12 +30,15 @@ public class RepositoryRemoveCommand extends CliCommand {
     @Option(names = {"-a", "--all"}, description = "Removes all repositories")
     private boolean all;
 
+    @Option(names = {"-f", "--force"}, description = "Does not prompt before removal of repository")
+    private boolean force;
+
     @Override
     public void run() {
 
         final Collection<Repository> repos;
         if (all) {
-            repos = RepositoryController.getRepositories();
+            repos = new ArrayList<>(RepositoryController.getRepositories());
         }
         else{
             repos = new ArrayList<>(repositoryName.size() + repositoryUrl.size());
@@ -50,20 +53,23 @@ public class RepositoryRemoveCommand extends CliCommand {
                     .map(Optional::get)
                     .forEach(repos::add);
         }
-        final Reader reader = new InputStreamReader(System.in);
-        final long removedCount = repos.stream()
-                .filter(repository -> {
-                    System.out.printf("Remove repository '%s' @ %s? [Y|n]%n", repository.getName(), repository.getUrl());
-                    try {
-                        final char result = (char) reader.read();
-                        return result == 'y' || result == 'Y';
-                    } catch (final IOException e) {
-                        e.printStackTrace();
-                        return false;
-                    }
-                })
-                .peek(RepositoryController::removeRepository)
-                .count();
-        System.out.printf("Removed %d repositories%n", removedCount);
+
+        if (!force) {
+            final Reader reader = new InputStreamReader(System.in);
+            repos.removeIf(repository -> {
+                System.out.printf("Remove repository '%s' @ %s? [Y|n]%n", repository.getName(), repository.getUrl());
+                try {
+                    final char result = (char) reader.read();
+                    return result != 'y' && result != 'Y';
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            });
+        }
+
+        repos.forEach(RepositoryController::removeRepository);
+
+        System.out.printf("Removed %d repositories%n", repos.size());
     }
 }
