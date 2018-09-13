@@ -5,6 +5,7 @@ import com.logdyn.ui.console.commands.KeeperCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryAddCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryListCommand;
+import com.logdyn.ui.console.commands.repository.RepositoryRemoveCommand;
 import picocli.CommandLine;
 import picocli.CommandLine.RunAll;
 
@@ -13,6 +14,7 @@ public class ConsoleApplication {
         CommandLine commandLine = new CommandLine(new KeeperCommand())
                 .addSubcommand("repository", new CommandLine(new RepositoryCommand())
                         .addSubcommand("add", new RepositoryAddCommand(), "-a")
+                        .addSubcommand("remove", new RepositoryRemoveCommand(), "-r")
                         .addSubcommand("list", new RepositoryListCommand(), "-l"),
                         "repos")
                 .addSubcommand("exit", new ExitCommand());
