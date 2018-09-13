@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface Repository {
     String getName();
+    void setName(String name);
     URL getUrl();
     void setAuthenticator(final Authenticator auth);
     boolean isUrlMatch(final URL url);

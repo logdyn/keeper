@@ -56,8 +56,18 @@ public class JiraRepository implements Repository {
     }
 
     @Override
+    public String toString() {
+        return String.format("%s @ %s", name, url);
+    }
+
+    @Override
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public void setName(final String name) {
+        this.name = name;
     }
 
     @Override
