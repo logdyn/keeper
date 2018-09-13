@@ -9,7 +9,7 @@ import picocli.CommandLine.Parameters;
 import java.net.URL;
 import java.util.Optional;
 
-@Command(name = "add", description = "add a remote repository")
+@Command(name = "add", description = "Add a remote repository")
 public class RepositoryAddCommand extends CliCommand {
 
     @Parameters(index = "0", description = "The URL of the repository to add", paramLabel = "REPOSITORY_URL")

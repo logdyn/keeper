@@ -4,13 +4,14 @@ import com.logdyn.SystemConfig;
 import com.logdyn.ui.console.ConsoleApplication;
 import org.apache.log4j.Logger;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.HelpCommand;
 import picocli.CommandLine.Option;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 @Command(name = "keeper",
-        description = "Entry point for the Keeper command line")
+        description = "Entry point for the Keeper command line", subcommands = HelpCommand.class)
 public class KeeperCommand extends CliCommand {
     private static final Logger LOGGER = Logger.getLogger(KeeperCommand.class);
 
@@ -19,7 +20,7 @@ public class KeeperCommand extends CliCommand {
     @Option(names={"-i", "--interactive"}, description = "Run keeper in interactive mode")
     private boolean interactiveFlag = false;
 
-    @Option(names = { "-V", "--version" }, versionHelp = true, description = "displays the program version")
+    @Option(names = { "-V", "--version" }, versionHelp = true, description = "Displays the program version")
     private boolean versionRequested = false;
 
     @Override

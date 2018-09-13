@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-@Command(name = "Remove", description = "Removes any repositories matching the given names or URLs")
+@Command(name = "remove", description = "Removes any repositories matching the given names or URLs")
 public class RepositoryRemoveCommand extends CliCommand {
 
     @Option(names = "-n", description = "Removes all repositories with matching name", paramLabel = "REPOSITORY_NAME")
