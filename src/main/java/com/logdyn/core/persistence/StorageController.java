@@ -1,7 +1,7 @@
-package com.logdyn.controllers.persistence;
+package com.logdyn.core.persistence;
 
-import com.logdyn.controllers.persistence.adapters.Adapter;
-import com.logdyn.controllers.persistence.adapters.NullAdapter;
+import com.logdyn.core.persistence.adapters.Adapter;
+import com.logdyn.core.persistence.adapters.NullAdapter;
 import com.logdyn.core.repository.Repository;
 import com.logdyn.core.repository.RepositoryController;
 import com.logdyn.core.task.WorkLog;

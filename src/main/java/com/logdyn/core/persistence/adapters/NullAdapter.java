@@ -1,4 +1,4 @@
-package com.logdyn.controllers.persistence.adapters;
+package com.logdyn.core.persistence.adapters;
 
 import org.w3c.dom.Document;
 

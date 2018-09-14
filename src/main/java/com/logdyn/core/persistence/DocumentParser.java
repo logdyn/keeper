@@ -1,4 +1,4 @@
-package com.logdyn.controllers.persistence;
+package com.logdyn.core.persistence;
 
 import com.logdyn.core.repository.Repository;
 import com.logdyn.core.repository.RepositoryController;
