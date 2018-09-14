@@ -1,6 +1,6 @@
-package com.logdyn.model.auth;
+package com.logdyn.core.authentication;
 
-import com.logdyn.model.repositories.Repository;
+import com.logdyn.core.repository.Repository;
 
 public class AuthenticationRequiredException extends Exception{
 

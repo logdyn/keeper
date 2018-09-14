@@ -1,10 +1,9 @@
-package com.logdyn.controllers;
+package com.logdyn.core.repository;
 
-import com.logdyn.controllers.factories.JiraRepositoryFactory;
-import com.logdyn.controllers.factories.RepositoryFactory;
-import com.logdyn.model.Task;
-import com.logdyn.model.auth.AuthenticationRequiredException;
-import com.logdyn.model.repositories.Repository;
+import com.logdyn.core.authentication.AuthenticationRequiredException;
+import com.logdyn.core.repository.factories.JiraRepositoryFactory;
+import com.logdyn.core.repository.factories.RepositoryFactory;
+import com.logdyn.core.task.Task;
 
 import java.net.URL;
 import java.util.Collection;

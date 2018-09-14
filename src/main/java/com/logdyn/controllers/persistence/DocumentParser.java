@@ -1,9 +1,9 @@
 package com.logdyn.controllers.persistence;
 
-import com.logdyn.controllers.RepositoryController;
-import com.logdyn.model.Task;
-import com.logdyn.model.WorkLog;
-import com.logdyn.model.repositories.Repository;
+import com.logdyn.core.repository.Repository;
+import com.logdyn.core.repository.RepositoryController;
+import com.logdyn.core.task.Task;
+import com.logdyn.core.task.WorkLog;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
