@@ -75,7 +75,8 @@ public final class StorageController {
             Document doc = docBuilder.parse(file);
             doc = StorageController.adapt(doc);
             final Collection<Repository> repositories = new DocumentParser(doc).parse();
-            RepositoryController.addRepositories(repositories);
+            //! Parser adds repositories, could change
+            //RepositoryController.addRepositories(repositories);
         } catch (final ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
         } catch (final IOException ioe) {

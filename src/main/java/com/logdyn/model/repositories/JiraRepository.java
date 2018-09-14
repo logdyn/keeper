@@ -96,7 +96,7 @@ public class JiraRepository extends Repository {
     }
 
     @Override
-    public void submitWorkLog(final Task task) throws AuthenticationRequiredException {
+    public void submitTask(final Task task) throws AuthenticationRequiredException {
         try {
             final HttpURLConnection conn = (HttpURLConnection) new URL(this.url, ISSUE_PATH + task.getId() + WORKLOG_PATH).openConnection();
             if (this.auth != null) {

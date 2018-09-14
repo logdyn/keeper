@@ -1,76 +1,97 @@
 package com.logdyn.controllers.persistence;
 
+import com.logdyn.controllers.RepositoryController;
+import com.logdyn.model.Task;
+import com.logdyn.model.WorkLog;
 import com.logdyn.model.repositories.Repository;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Arrays;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class DocumentParser {
-    private enum Model {
-        REPOSITORY("repository"),
-        TASK("task"),
-        WORKLOG("worklog");
-        private String tagName;
-        Model(final String tagName) {
-            this.tagName = tagName;
-        }
 
-        public String getTagName() {
-            return this.tagName;
-        }
+    private static final Logger LOGGER = Logger.getLogger(DocumentParser.class);
+    private final Document doc;
 
-        public static Optional<Model> fromTagName(final String tagName){
-            return Arrays.stream(Model.values())
-                    .filter(m -> m.getTagName().equals(tagName))
-                    .findAny();
-        }
+    public DocumentParser(final Document doc) {
+        this.doc = doc;
     }
-
-    private Model currentModel = null;
-
-    public DocumentParser(final File file) {
-        this.file = file;
-    }
-
-    private File file;
 
     public Collection<Repository> parse(){
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLEventReader eventReader = factory.createXMLEventReader(new FileInputStream(this.file));
-        while(eventReader.hasNext()) {
-            XMLEvent event = eventReader.nextEvent();
-            switch(event.getEventType()) {
-                case XMLStreamConstants.START_ELEMENT:{
-                    StartElement startElement = event.asStartElement();
-                    final String tagName = startElement.getName().getLocalPart();
-                    Model.fromTagName(tagName)
-                            .ifPresent(m -> this.currentModel = m);
-                    break;
-                }
-                case XMLStreamConstants.CHARACTERS: {
-                    //TODO builders
-                    break;
-                }
-                case XMLStreamConstants.END_ELEMENT: {
-                    EndElement endElement = event.asEndElement();
-                    final String tagName = endElement.getName().getLocalPart();
-                    Model.fromTagName(tagName)
-                            .filter(this.currentModel::equals)
-                            .ifPresent(m -> this.currentModel = null);
+
+        Element root = doc.getDocumentElement();
+
+        Node repositories = root.getElementsByTagName("repositories").item(0);
+
+        List<Repository> repos = new ArrayList<>(repositories.getChildNodes().getLength());
+
+        for(Node node = repositories.getFirstChild(); node != null; node = node.getNextSibling()) {
+            if (node instanceof Element) {
+                try {
+                    repos.add(parseRepoElement((Element) node));
+                } catch (MalformedURLException e) {
+                    LOGGER.error("Could not parse repository URL", e);
                 }
             }
         }
 
+        return repos;
+    }
+
+    private Repository parseRepoElement(Element element) throws MalformedURLException {
+
+        String name = element.getElementsByTagName("name").item(0).getTextContent();
+        URL url = new URL(element.getElementsByTagName("url").item(0).getTextContent());
+
+        Optional<Repository> repo = RepositoryController.addRepository(url, name);
+        repo.ifPresent(repository -> {
+            NodeList tasksNodeList = element.getElementsByTagName("tasks");
+            if (tasksNodeList.getLength() > 0) {
+
+                Element tasks = (Element) tasksNodeList.item(0);
+
+                for(Node node = tasks.getFirstChild(); node != null; node = node.getNextSibling()) {
+                    if (node instanceof Element) {
+                        try {
+                            repository.addTask(parseTaskElement((Element) node));
+                        } catch (MalformedURLException e) {
+                            LOGGER.error("Could not parse task URL", e);
+                        }
+                    }
+                }
+            }
+
+        });
+
+        //! Returns null as repos are added as part of parse, should be returned later
         return null;
+    }
+
+    private Task parseTaskElement(final Element element) throws MalformedURLException {
+
+        final String id = element.getAttribute("id");
+        final String title = element.getElementsByTagName("title").item(0).getTextContent();
+        final String description = element.getElementsByTagName("description").item(0).getTextContent();
+        final URL url = new URL(element.getElementsByTagName("url").item(0).getTextContent());
+
+        final WorkLog worklog = parseWorklogElement((Element) element.getElementsByTagName("worklog").item(0));
+
+        return new Task(id, title, description, url, worklog);
+    }
+
+    private WorkLog parseWorklogElement(final Element element) {
+        final String comment = element.getElementsByTagName("comment").item(0).getTextContent();
+        final long start = Long.parseLong(element.getElementsByTagName("start").item(0).getTextContent());
+        final long duration = Long.parseLong(element.getElementsByTagName("duration").item(0).getTextContent());
+        return new WorkLog(start, duration, comment);
     }
 }

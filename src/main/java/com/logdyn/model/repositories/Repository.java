@@ -48,6 +48,10 @@ public abstract class Repository {
         return task;
     }
 
+    public void addTask(Task task) {
+        this.tasks.put(task.getId(), task);
+    }
+
     abstract String getTaskId(final URL url);
     abstract void submitTask(final Task task) throws AuthenticationRequiredException;
     abstract Optional<Task> getRemoteTask(final String id) throws AuthenticationRequiredException;
