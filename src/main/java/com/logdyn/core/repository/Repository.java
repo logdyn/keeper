@@ -1,8 +1,8 @@
 package com.logdyn.core.repository;
 
-import com.logdyn.core.task.Task;
 import com.logdyn.core.authentication.AuthenticationRequiredException;
 import com.logdyn.core.authentication.Authenticator;
+import com.logdyn.core.task.Task;
 
 import java.net.URL;
 import java.util.Collection;
@@ -59,4 +59,8 @@ public abstract class Repository {
     public Collection<Task> getTasks() {
         return Collections.unmodifiableCollection(tasks.values());
     }
+
+    public void setName(final String repositoryName) {
+        this.name = repositoryName;
+    };
 }

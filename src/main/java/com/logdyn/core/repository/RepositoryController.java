@@ -52,6 +52,10 @@ public class RepositoryController {
                 .findAny();
     }
 
+    public static Collection<Repository> getRepositories() {
+        return Collections.unmodifiableCollection(repositories);
+    }
+
     public static Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
         Optional<Repository> repo = getRepository(url);
         if (repo.isPresent()) {
@@ -66,10 +70,6 @@ public class RepositoryController {
             return repository.get().getTask(taskName);
         }
         return Optional.empty();
-    }
-
-    public static Collection<Repository> getRepositories() {
-        return Collections.unmodifiableCollection(repositories);
     }
 
     public static void addRepositories(final Collection<Repository> repositories) {
