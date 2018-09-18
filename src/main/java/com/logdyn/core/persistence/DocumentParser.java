@@ -28,18 +28,18 @@ public class DocumentParser {
 
     public Collection<Repository> parse(){
 
-        Element root = doc.getDocumentElement();
+        final Element root = doc.getDocumentElement();
 
-        Node repositories = root.getElementsByTagName("repositories").item(0);
+        final Node repositories = root.getElementsByTagName("repositories").item(0); //NON-NLS
 
-        List<Repository> repos = new ArrayList<>(repositories.getChildNodes().getLength());
+        final List<Repository> repos = new ArrayList<>(repositories.getChildNodes().getLength());
 
         for(Node node = repositories.getFirstChild(); node != null; node = node.getNextSibling()) {
             if (node instanceof Element) {
                 try {
-                    repos.add(parseRepoElement((Element) node));
-                } catch (MalformedURLException e) {
-                    LOGGER.error("Could not parse repository URL", e);
+                    repos.add(this.parseRepoElement((Element) node));
+                } catch (final MalformedURLException e) {
+                    LOGGER.error("Could not parse repository URL", e); //NON-NLS
                 }
             }
         }
@@ -47,24 +47,24 @@ public class DocumentParser {
         return repos;
     }
 
-    private Repository parseRepoElement(Element element) throws MalformedURLException {
+    private Repository parseRepoElement(final Element element) throws MalformedURLException {
 
-        String name = element.getElementsByTagName("name").item(0).getTextContent();
-        URL url = new URL(element.getElementsByTagName("url").item(0).getTextContent());
+        final String name = this.getTagValue(element,"name"); //NON-NLS
+        final URL url = new URL(this.getTagValue(element,"url")); //NON-NLS
 
-        Optional<Repository> repo = RepositoryController.addRepository(url, name);
+        final Optional<Repository> repo = RepositoryController.addRepository(url, name);
         repo.ifPresent(repository -> {
-            NodeList tasksNodeList = element.getElementsByTagName("tasks");
+            final NodeList tasksNodeList = element.getElementsByTagName("tasks"); //NON-NLS
             if (tasksNodeList.getLength() > 0) {
 
-                Element tasks = (Element) tasksNodeList.item(0);
+                final Element tasks = (Element) tasksNodeList.item(0);
 
                 for(Node node = tasks.getFirstChild(); node != null; node = node.getNextSibling()) {
                     if (node instanceof Element) {
                         try {
-                            repository.addTask(parseTaskElement((Element) node));
+                            repository.addTask(this.parseTaskElement((Element) node));
                         } catch (MalformedURLException e) {
-                            LOGGER.error("Could not parse task URL", e);
+                            LOGGER.error("Could not parse task URL", e); //NON-NLS
                         }
                     }
                 }
@@ -78,20 +78,24 @@ public class DocumentParser {
 
     private Task parseTaskElement(final Element element) throws MalformedURLException {
 
-        final String id = element.getAttribute("id");
-        final String title = element.getElementsByTagName("title").item(0).getTextContent();
-        final String description = element.getElementsByTagName("description").item(0).getTextContent();
-        final URL url = new URL(element.getElementsByTagName("url").item(0).getTextContent());
+        final String id = element.getAttribute("id"); //NON-NLS
+        final String title = this.getTagValue(element,"title"); //NON-NLS
+        final String description = this.getTagValue(element,"description"); //NON-NLS
+        final URL url = new URL(this.getTagValue(element,"url")); //NON-NLS
 
-        final WorkLog worklog = parseWorklogElement((Element) element.getElementsByTagName("worklog").item(0));
+        final WorkLog worklog = parseWorklogElement((Element) element.getElementsByTagName("worklog").item(0)); //NON-NLS
 
         return new Task(id, title, description, url, worklog);
     }
 
     private WorkLog parseWorklogElement(final Element element) {
-        final String comment = element.getElementsByTagName("comment").item(0).getTextContent();
-        final long start = Long.parseLong(element.getElementsByTagName("start").item(0).getTextContent());
-        final long duration = Long.parseLong(element.getElementsByTagName("duration").item(0).getTextContent());
+        final String comment = this.getTagValue(element,"comment"); //NON-NLS
+        final long start = Long.parseLong(this.getTagValue(element,"start")); //NON-NLS
+        final long duration = Long.parseLong(this.getTagValue(element,"duration")); //NON-NLS
         return new WorkLog(start, duration, comment);
+    }
+
+    private String getTagValue(final Element element, final String tagName) {
+        return element.getElementsByTagName(tagName).item(0).getTextContent();
     }
 }

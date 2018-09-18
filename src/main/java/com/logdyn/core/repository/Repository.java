@@ -32,14 +32,14 @@ public abstract class Repository {
     public void setAuthenticator(final Authenticator auth) { this.auth = auth; }
     public boolean isUrlMatch(final URL url) { return this.url.getHost().equals(url.getHost()); }
 
-    public Optional<Task> getTask(URL url) throws AuthenticationRequiredException {
+    public Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
         if (!isUrlMatch(url)){
             return Optional.empty();
         }
         return this.getTask(this.getTaskId(url));
     }
 
-    public Optional<Task> getTask(String id) throws AuthenticationRequiredException {
+    public Optional<Task> getTask(final String id) throws AuthenticationRequiredException {
         Optional<Task> task = Optional.ofNullable(tasks.get(id));
         if (!task.isPresent()) {
             task = this.getRemoteTask(id);
@@ -48,7 +48,7 @@ public abstract class Repository {
         return task;
     }
 
-    public void addTask(Task task) {
+    public void addTask(final Task task) {
         this.tasks.put(task.getId(), task);
     }
 

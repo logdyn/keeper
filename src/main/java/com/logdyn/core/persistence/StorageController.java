@@ -30,7 +30,7 @@ import java.util.Collection;
 
 public final class StorageController {
     private static final int VERSION;
-    private static final String FILEPATH = System.getProperty("user.home") + "/.keeper/state.xml";
+    private static final String FILEPATH = System.getProperty("user.home") + "/.keeper/state.xml"; //NON-NLS
     private static final Collection<Adapter> adapters = new ArrayList<>();
 
     static {
@@ -44,11 +44,11 @@ public final class StorageController {
     }
 
     public static void save() {
-        final Document doc = StorageController.createDocument();
         final File file = new File(FILEPATH);
         if (!file.getParentFile().exists() && !file.getParentFile().mkdir()) {
             throw new UncheckedIOException(new FileSystemException(file.getParent(), null, "could not create folder"));
         }
+        final Document doc = StorageController.createDocument();
         StorageController.write(doc, file);
     }
 
@@ -58,8 +58,8 @@ public final class StorageController {
             final Transformer transformer = tFactory.newTransformer();
             final DOMSource source = new DOMSource(doc);
             final StreamResult result = new StreamResult(new FileOutputStream(file));
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //NON-NLS
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); //NON-NLS
             transformer.transform(source, result);
 
         } catch (final TransformerException | FileNotFoundException e) {
@@ -97,40 +97,40 @@ public final class StorageController {
             final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             final Document doc = docBuilder.newDocument();
 
-            final Element root = doc.createElement("state");
+            final Element root = doc.createElement("state"); //NON-NLS
             doc.appendChild(root);
 
-            root.setAttribute("version", String.valueOf(VERSION));
+            root.setAttribute("version", String.valueOf(VERSION)); //NON-NLS
 
-            final Element repositories = doc.createElement("repositories");
+            final Element repositories = doc.createElement("repositories"); //NON-NLS
             root.appendChild(repositories);
 
             RepositoryController.getRepositories().forEach(repo -> {
-                final Element repository = doc.createElement("repository");
+                final Element repository = doc.createElement("repository"); //NON-NLS
                 repositories.appendChild(repository);
 
-                appendTextNode("name", repo.getName(), repository, doc);
-                appendTextNode("url", repo.getUrl().toString(), repository, doc);
+                appendTextNode("name", repo.getName(), repository, doc); //NON-NLS
+                appendTextNode("url", repo.getUrl().toString(), repository, doc); //NON-NLS
 
-                final Element tasks = doc.createElement("tasks");
+                final Element tasks = doc.createElement("tasks"); //NON-NLS
                 repository.appendChild(tasks);
 
                 repo.getTasks().forEach(t -> {
-                    final Element task = doc.createElement("task");
+                    final Element task = doc.createElement("task"); //NON-NLS
                     tasks.appendChild(task);
 
-                    task.setAttribute("id", t.getId());
-                    appendTextNode("title", t.getTitle(), task, doc);
-                    appendTextNode("description", t.getDescription(), task, doc);
-                    appendTextNode("url", t.getURL().toString(), task,doc);
+                    task.setAttribute("id", t.getId()); //NON-NLS
+                    appendTextNode("title", t.getTitle(), task, doc); //NON-NLS
+                    appendTextNode("description", t.getDescription(), task, doc); //NON-NLS
+                    appendTextNode("url", t.getURL().toString(), task,doc); //NON-NLS
 
-                    final Element worklog = doc.createElement("worklog");
+                    final Element worklog = doc.createElement("worklog"); //NON-NLS
                     task.appendChild(worklog);
 
                     final WorkLog log = t.getCurrentWorkLog();
-                    appendTextNode("comment", log.getComment(), worklog, doc);
-                    appendTextNode("start", String.valueOf(log.getTimer().getStartTime()), worklog, doc);
-                    appendTextNode("duration", String.valueOf(log.getTimer().getDuration()), worklog, doc);
+                    appendTextNode("comment", log.getComment(), worklog, doc); //NON-NLS
+                    appendTextNode("start", String.valueOf(log.getTimer().getStartTime()), worklog, doc); //NON-NLS
+                    appendTextNode("duration", String.valueOf(log.getTimer().getDuration()), worklog, doc); //NON-NLS
                 });
             });
 
