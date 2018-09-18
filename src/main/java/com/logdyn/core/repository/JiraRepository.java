@@ -1,9 +1,9 @@
 package com.logdyn.core.repository;
 
-import com.logdyn.core.task.Task;
-import com.logdyn.core.task.WorkLog;
 import com.logdyn.core.authentication.AuthenticationRequiredException;
 import com.logdyn.core.authentication.Authenticator;
+import com.logdyn.core.task.Task;
+import com.logdyn.core.task.WorkLog;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,90 +22,47 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public class JiraRepository implements Repository {
+public class JiraRepository extends Repository {
     private static final Logger LOGGER = Logger.getLogger(JiraRepository.class);
 
     private static final String API_PATH = "/rest/api/2"; //NON-NLS
     private static final String ISSUE_PATH = API_PATH + "/issue/"; //NON-NLS
     private static final String ISSUE_BROWSER_PATH = "/browse/"; //NON-NLS
-    public static final String WORKLOG_PATH = "/worklog"; //NON-NLS
+    private static final String WORKLOG_PATH = "/worklog"; //NON-NLS
     private static final String ISSUE_ID_KEY = "key"; //NON-NLS
     private static final String ISSUE_FIELDS_KEY = "fields"; //NON-NLS
     private static final String ISSUE_TITLE_KEY = "summary"; //NON-NLS
     private static final String ISSUE_DESC_KEY = "description"; //NON-NLS
-    public static final String POST_REQUEST_METHOD = "POST"; //NON-NLS
-    public static final String CONTENT_TYPE_KEY = "Content-Type"; //NON-NLS
-    public static final String JSON_CONTENT_TYPE = "application/json"; //NON-NLS
-    public static final DateTimeFormatter JIRA_TIME_FORMAT = DateTimeFormatter.ofPattern("yyy-MM-dd'T'HH:mm:ss.SSSxxxx"); //NON-NLS
-    public static final String WORKLOG_START_TIME_KEY = "started"; //NON-NLS
-    public static final String WORKLOG_DURATION_KEY = "timeSpentSeconds"; //NON-NLS
-    public static final String WORKLOG_DESC_KEY = "comment"; //NON-NLS
-
-    private String name;
-    private URL url;
-    private Authenticator auth;
+    private static final String POST_REQUEST_METHOD = "POST"; //NON-NLS
+    private static final String CONTENT_TYPE_KEY = "Content-Type"; //NON-NLS
+    private static final String JSON_CONTENT_TYPE = "application/json"; //NON-NLS
+    private static final DateTimeFormatter JIRA_TIME_FORMAT = DateTimeFormatter.ofPattern("yyy-MM-dd'T'HH:mm:ss.SSSxxxx"); //NON-NLS
+    private static final String WORKLOG_START_TIME_KEY = "started"; //NON-NLS
+    private static final String WORKLOG_DURATION_KEY = "timeSpentSeconds"; //NON-NLS
+    private static final String WORKLOG_DESC_KEY = "comment"; //NON-NLS
 
     public JiraRepository(final URL url, final String name) {
-        this(url, name, null);
+        super(url, name);
     }
 
     public JiraRepository(final URL url, final String name, final Authenticator auth) {
-        this.url = url;
-        this.name = name;
-        this.auth = auth;
+        super(url, name, auth);
     }
 
     @Override
-    public String toString() {
-        return String.format("%s @ %s", name, url);
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    @Override
-    public URL getUrl() {
-        return this.url;
-    }
-
-    @Override
-    public void setAuthenticator(final Authenticator auth) {
-        this.auth = auth;
-    }
-
-    @Override
-    public boolean isUrlMatch(final URL url) {
-        return this.url.getHost().equals(url.getHost());
-    }
-
-    @Override
-    public Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
-        if (!isUrlMatch(url)){
-            return Optional.empty();
-        }
-        return this.getTask(this.getKey(url));
-    }
-
-    private String getKey(final URL url){
+    String getTaskId(final URL url){
         final String path = url.getPath();
         final int lastSeparator = path.lastIndexOf('/');
         return path.substring(lastSeparator + 1);
     }
 
     @Override
-    public Optional<Task> getTask(final String id) throws AuthenticationRequiredException {
+    public Optional<Task> getRemoteTask(final String id) throws AuthenticationRequiredException {
         try {
             final HttpURLConnection conn = (HttpURLConnection) new URL(this.url, ISSUE_PATH + id).openConnection();
             if (this.auth != null) {
                 auth.authenticate(conn);
-            };
+            }
             final int resCode = conn.getResponseCode();
             if (resCode == 200) {
                 return createTask(conn);
@@ -139,12 +96,12 @@ public class JiraRepository implements Repository {
     }
 
     @Override
-    public void submitWorkLog(final Task task) throws AuthenticationRequiredException {
+    public void submitTask(final Task task) throws AuthenticationRequiredException {
         try {
             final HttpURLConnection conn = (HttpURLConnection) new URL(this.url, ISSUE_PATH + task.getId() + WORKLOG_PATH).openConnection();
             if (this.auth != null) {
                 auth.authenticate(conn);
-            };
+            }
             conn.setRequestMethod(POST_REQUEST_METHOD);
             conn.setDoOutput(true);
             conn.setRequestProperty(CONTENT_TYPE_KEY, JSON_CONTENT_TYPE);

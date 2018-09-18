@@ -1,6 +1,5 @@
 package com.logdyn.core.repository.factories;
 
-import com.logdyn.core.authentication.Authenticator;
 import com.logdyn.core.repository.JiraRepository;
 import com.logdyn.core.repository.Repository;
 import org.apache.log4j.Logger;
@@ -24,17 +23,17 @@ public class JiraRepositoryFactory implements RepositoryFactory {
     }
 
     @Override
-    public Optional<Repository> createRepository(final URL url, final Authenticator auth) {
+    public Optional<Repository> createRepository(final URL url, final String name) {
         try (final InputStream stream = new URL(url, SERVER_INFO_PATH).openStream())
         {
             final JSONObject json = new JSONObject(new JSONTokener(stream));
-            String baseUrl = json.getString(BASE_URL_KEY);
-            String name = json.getString(SERVER_TITLE_KEY);
-            if (name == null) {
+            final String baseUrl = json.getString(BASE_URL_KEY);
+            final String serverName = json.getString(SERVER_TITLE_KEY);
+            if (serverName == null) {
                 return Optional.empty();
             }
 
-            return Optional.of(new JiraRepository(new URL(baseUrl), name, auth));
+            return Optional.of(new JiraRepository(new URL(baseUrl), name != null ? name : serverName));
         }
         catch (final IOException e) {
             LOGGER.debug(String.format("Could not create JIRA Repository from URL: %s", url), e);
