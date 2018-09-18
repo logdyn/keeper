@@ -1,11 +1,14 @@
 package com.logdyn.ui.console.commands;
 
+import com.logdyn.Main;
 import com.logdyn.SystemConfig;
-import com.logdyn.ui.console.ConsoleApplication;
+import com.logdyn.ui.javafx.FxApplication;
+import javafx.application.Application;
 import org.apache.log4j.Logger;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -23,6 +26,15 @@ public class KeeperCommand extends CliCommand {
     @Option(names = { "-V", "--version" }, versionHelp = true, description = "Displays the program version")
     private boolean versionRequested = false;
 
+    @Option(names= {"-c"}, description = "Launch the application as a console application")
+    private boolean cli;
+
+    @Option (names={"-g"}, description = "Launch the application as a desktop application")
+    private boolean gui;
+
+    @Parameters
+    private String[] args;
+
     @Override
     public void run() {
         if (interactiveFlag && !INTERACTIVE_MODE) {
@@ -33,11 +45,17 @@ public class KeeperCommand extends CliCommand {
                 try{
                     System.out.print("> ");
                     final String[] args = reader.readLine().split("\\s");
-                    ConsoleApplication.main(args);
+                    Main.main(args);
                 } catch (final Exception e) {
                     LOGGER.error(e);
                 }
             }
+        }
+        else if (this.gui || (System.console() == null && !cli)) {
+            Application.launch(FxApplication.class, this.args);
+        }
+        else {
+            super.run();
         }
     }
 }
