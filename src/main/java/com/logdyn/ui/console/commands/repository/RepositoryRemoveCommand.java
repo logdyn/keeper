@@ -36,27 +36,28 @@ public class RepositoryRemoveCommand extends CliCommand {
     @Override
     public void run() {
 
-        final Collection<Repository> repos;
+        final Collection<Repository> removalList;
         if (all) {
-            repos = new ArrayList<>(RepositoryController.getRepositories());
+            removalList = new ArrayList<>(RepositoryController.getRepositories());
         }
         else{
-            repos = new ArrayList<>(repositoryName.size() + repositoryUrl.size());
+            removalList = new ArrayList<>(repositoryName.size() + repositoryUrl.size());
             repositoryName.stream()
                     .map(RepositoryController::getRepository)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .forEach(repos::add);
+                    .forEach(removalList::add);
             repositoryUrl.stream()
                     .map(RepositoryController::getRepository)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .forEach(repos::add);
+                    .forEach(removalList::add);
         }
 
         if (!force) {
+            //* Prompt user for confirmation of removal
             final Reader reader = new InputStreamReader(System.in);
-            repos.removeIf(repository -> {
+            removalList.removeIf(repository -> {
                 System.out.printf("Remove repository '%s' @ %s? [Y|n]%n", repository.getName(), repository.getUrl());
                 try {
                     final char result = (char) reader.read();
@@ -68,8 +69,8 @@ public class RepositoryRemoveCommand extends CliCommand {
             });
         }
 
-        repos.forEach(RepositoryController::removeRepository);
+        removalList.forEach(RepositoryController::removeRepository);
 
-        System.out.printf("Removed %d repositories%n", repos.size());
+        System.out.printf("Removed %d repositories%n", removalList.size());
     }
 }
