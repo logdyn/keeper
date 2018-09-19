@@ -24,9 +24,13 @@ import java.util.List;
 
 public class Main {
     private static Logger LOGGER = Logger.getLogger(Main.class);
+    private static boolean isFirstRun = true;
 
     public static void main(final String... args) throws Exception{
-        addSSLVerifier(new InteractiveTrustManager());
+        if (isFirstRun) {
+            isFirstRun = false;
+            addSSLVerifier(new InteractiveTrustManager());
+        }
         final CommandLine commandLine = new CommandLine(new KeeperCommand())
                 .addSubcommand("repository", new CommandLine(new RepositoryCommand())
                                 .addSubcommand("add", new RepositoryAddCommand(), "-a")
