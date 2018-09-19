@@ -1,16 +1,49 @@
 package com.logdyn;
 
-import com.logdyn.ui.console.ConsoleApplication;
-import com.logdyn.ui.javafx.FxApplication;
-import javafx.application.Application;
+import com.logdyn.ui.console.commands.ExitCommand;
+import com.logdyn.ui.console.commands.KeeperCommand;
+import com.logdyn.ui.console.commands.repository.RepositoryAddCommand;
+import com.logdyn.ui.console.commands.repository.RepositoryCommand;
+import com.logdyn.ui.console.commands.repository.RepositoryListCommand;
+import com.logdyn.ui.console.commands.repository.RepositoryRemoveCommand;
+import org.apache.log4j.Logger;
+import picocli.CommandLine;
+import picocli.CommandLine.ExecutionException;
+import picocli.CommandLine.IExceptionHandler2;
+import picocli.CommandLine.ParameterException;
+import picocli.CommandLine.ParseResult;
+import picocli.CommandLine.RunLast;
+
+import java.util.List;
 
 public class Main {
 
+    private static Logger LOGGER = Logger.getLogger(Main.class);
+
     public static void main(final String... args) {
-        if (args.length == 0) {
-            Application.launch(FxApplication.class, args);
-        } else {
-            ConsoleApplication.main(args);
+        CommandLine commandLine = new CommandLine(new KeeperCommand())
+                .addSubcommand("repository", new CommandLine(new RepositoryCommand())
+                        .addSubcommand("add", new RepositoryAddCommand(), "-a")
+                        .addSubcommand("remove", new RepositoryRemoveCommand(), "-r")
+                        .addSubcommand("list", new RepositoryListCommand(), "-l"),
+                        "repos")
+                .addSubcommand("exit", new ExitCommand());
+        commandLine.parseWithHandlers(new RunLast(), new CliExceptionHandler(), args);
+    }
+
+    static class CliExceptionHandler implements IExceptionHandler2<List<Object>> {
+        @Override
+        public List<Object> handleParseException(final ParameterException ex, final String[] args) {
+            LOGGER.debug(ex.getMessage(), ex);
+            return null;
+        }
+
+        @Override
+        public List<Object> handleExecutionException(final ExecutionException ex, final ParseResult parseResult) {
+            LOGGER.error(ex.getMessage(), ex);
+            return null;
         }
     }
+
 }
+
