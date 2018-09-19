@@ -62,5 +62,10 @@ public abstract class Repository {
 
     public void setName(final String repositoryName) {
         this.name = repositoryName;
-    };
+    }
+
+    @Override
+    public String toString() {
+        return this.name + " <" +  this.url + '>';
+    }
 }
