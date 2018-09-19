@@ -67,20 +67,22 @@ public final class StorageController {
         }
     }
 
-    public static void open() {
+    public static void load() {
         final File file = new File(FILEPATH);
-        final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        try {
-            final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(file);
-            doc = StorageController.adapt(doc);
-            final Collection<Repository> repositories = new DocumentParser(doc).parse();
-            //! Parser adds repositories, could change
-            //RepositoryController.addRepositories(repositories);
-        } catch (final ParserConfigurationException | SAXException e) {
-            throw new RuntimeException(e);
-        } catch (final IOException ioe) {
-            throw new UncheckedIOException(ioe);
+        if (file.exists()){
+            final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            try {
+                final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                Document doc = docBuilder.parse(file);
+                doc = StorageController.adapt(doc);
+                final Collection<Repository> repositories = new DocumentParser(doc).parse();
+                //! Parser adds repositories, could change
+                //RepositoryController.addRepositories(repositories);
+            } catch (final ParserConfigurationException | SAXException e) {
+                throw new RuntimeException(e);
+            } catch (final IOException ioe) {
+                throw new UncheckedIOException(ioe);
+            }
         }
     }
 
