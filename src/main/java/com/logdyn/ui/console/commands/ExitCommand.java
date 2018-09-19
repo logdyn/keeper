@@ -1,26 +1,11 @@
 package com.logdyn.ui.console.commands;
 
-import java.util.Arrays;
-import java.util.Collection;
+import picocli.CommandLine.Command;
 
-public class ExitCommand implements Command {
+@Command(description = "Exits the keeper command line", name = "exit")
+public class ExitCommand extends CliCommand {
     @Override
-    public void execute(final String... args) {
+    public void run() {
         System.exit(0);
-    }
-
-    @Override
-    public String getDescription() {
-        return "";
-    }
-
-    @Override
-    public String getHelp() {
-        return "Exits the program";
-    }
-
-    @Override
-    public Collection<String> getNames() {
-        return Arrays.asList("exit", "-x");
     }
 }
