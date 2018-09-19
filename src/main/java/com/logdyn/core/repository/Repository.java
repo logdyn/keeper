@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public abstract class Repository {
@@ -67,5 +68,18 @@ public abstract class Repository {
     @Override
     public String toString() {
         return this.name + " <" +  this.url + '>';
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Repository that = (Repository) o;
+        return Objects.equals(url, that.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return 137 * url.hashCode();
     }
 }
