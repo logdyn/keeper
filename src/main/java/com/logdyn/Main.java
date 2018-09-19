@@ -26,6 +26,7 @@ public class Main {
         if (isFirstRun) {
             isFirstRun = false;
             StorageController.load();
+            Runtime.getRuntime().addShutdownHook(new Thread(StorageController::save, "Shutdown Save Hook"));
         }
         final CommandLine commandLine = new CommandLine(new KeeperCommand())
                 .addSubcommand("repository", new CommandLine(new RepositoryCommand())
