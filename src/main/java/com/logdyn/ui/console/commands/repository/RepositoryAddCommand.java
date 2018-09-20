@@ -27,9 +27,9 @@ public class RepositoryAddCommand extends CliCommand {
         }
 
         if (repo.isPresent()) {
-            System.out.printf("Added repository %s from %s%n", repo.get().getName(), repo.get().getUrl());
+            System.out.println("Added repository: " + repo.get());
         } else {
-            System.err.printf("Could not add repository from %s%n", repositoryUrl);
+            System.err.println("Could not add repository from url: " + repositoryUrl);
         }
     }
 }
