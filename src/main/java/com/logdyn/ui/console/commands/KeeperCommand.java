@@ -2,6 +2,7 @@ package com.logdyn.ui.console.commands;
 
 import com.logdyn.Main;
 import com.logdyn.SystemConfig;
+import com.logdyn.ui.console.ConsoleUtils;
 import com.logdyn.ui.javafx.FxApplication;
 import javafx.application.Application;
 import org.apache.log4j.Logger;
@@ -9,9 +10,6 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 @Command(name = "keeper",
         description = "Entry point for the Keeper command line", subcommands = HelpCommand.class)
@@ -40,14 +38,12 @@ public class KeeperCommand extends CliCommand {
         if (interactiveFlag && !INTERACTIVE_MODE) {
             INTERACTIVE_MODE = true;
             System.out.printf("Keeper: %s%n", SystemConfig.VERSION);
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             while (true){
                 try{
-                    System.out.print("> ");
-                    final String[] args = reader.readLine().split("\\s");
-                    Main.main(args);
+                    Main.main(ConsoleUtils.prompt().split("\\s"));
                 } catch (final Exception e) {
                     LOGGER.error(e);
+                    System.out.println("Something went wrong: " + e.getLocalizedMessage());
                 }
             }
         }

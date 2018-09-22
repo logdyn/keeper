@@ -2,13 +2,11 @@ package com.logdyn.ui.console.commands.repository;
 
 import com.logdyn.core.repository.Repository;
 import com.logdyn.core.repository.RepositoryController;
+import com.logdyn.ui.console.ConsoleUtils;
 import com.logdyn.ui.console.commands.CliCommand;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,17 +51,7 @@ public class RepositoryRemoveCommand extends CliCommand {
 
         if (!force) {
             //* Prompt user for confirmation of removal
-            final Reader reader = new InputStreamReader(System.in);
-            removalList.removeIf(repository -> {
-                System.out.printf("Remove repository: %s? [Y|n]%n", repository);
-                try {
-                    final char result = (char) reader.read();
-                    return result != 'y' && result != 'Y';
-                } catch (final IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            });
+            removalList.removeIf(repository -> !ConsoleUtils.promptBoolean("Remove repository: %s?", repository));
         }
 
         removalList.forEach(RepositoryController::removeRepository);
