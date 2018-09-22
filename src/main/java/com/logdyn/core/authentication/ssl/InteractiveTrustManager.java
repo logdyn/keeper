@@ -1,10 +1,8 @@
 package com.logdyn.core.authentication.ssl;
 
+import com.logdyn.ui.console.ConsoleUtils;
+
 import javax.net.ssl.X509TrustManager;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -21,21 +19,15 @@ public class InteractiveTrustManager implements X509TrustManager {
     @Override
     public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
         if (!acceptedCerts.contains(chain[0])) {
-            System.out.printf("SSL Certificate could not be verified.%nDo you want to connect to server with certificate '%s'?%n[Y|n]%n> ",
+            final boolean userResponse = ConsoleUtils.promptBoolean(
+                    true,
+                    "SSL Certificate could not be verified.%nDo you want to connect to server with certificate '%s'?%n",
                     chain[0].getSubjectX500Principal().getName());
 
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-            try {
-                final String nextLine = reader.readLine();
-
-                if (nextLine.isEmpty() || nextLine.equalsIgnoreCase("y")) {
-                    acceptedCerts.add(chain[0]);
-                } else {
-                    throw new CertificateException();
-                }
-            } catch (final IOException e) {
-                throw new UncheckedIOException(e);
+            if (userResponse) {
+                acceptedCerts.add(chain[0]);
+            } else {
+                throw new CertificateException();
             }
         }
     }
