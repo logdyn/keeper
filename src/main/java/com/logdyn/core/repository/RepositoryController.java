@@ -8,12 +8,13 @@ import com.logdyn.core.task.Task;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Optional;
 
 public class RepositoryController {
     private static Collection<RepositoryFactory> factories = new LinkedList<>();
-    private static Collection<Repository> repositories = new LinkedList<>();
+    private static Collection<Repository> repositories = new HashSet<>();
 
     static {
         factories.add(new JiraRepositoryFactory());
@@ -30,8 +31,7 @@ public class RepositoryController {
                 .findAny()
                 .map(Optional::get);
 
-        repo.ifPresent(repositories::add);
-        return repo;
+        return repo.filter(repositories::add);
     }
 
     public static boolean removeRepository(final Repository repository)

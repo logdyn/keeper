@@ -6,7 +6,6 @@ import com.logdyn.ui.console.commands.CliCommand;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -15,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
-import java.util.stream.Collectors;
 
 @Command(name = "remove", description = "Removes any repositories matching the given names or URLs")
 public class RepositoryRemoveCommand extends CliCommand {
@@ -58,7 +55,7 @@ public class RepositoryRemoveCommand extends CliCommand {
             //* Prompt user for confirmation of removal
             final Reader reader = new InputStreamReader(System.in);
             removalList.removeIf(repository -> {
-                System.out.printf("Remove repository '%s' @ %s? [Y|n]%n", repository.getName(), repository.getUrl());
+                System.out.printf("Remove repository: %s? [Y|n]%n", repository);
                 try {
                     final char result = (char) reader.read();
                     return result != 'y' && result != 'Y';
