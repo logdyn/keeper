@@ -9,6 +9,8 @@ import com.logdyn.ui.console.commands.repository.RepositoryAddCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryListCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryRemoveCommand;
+import com.logdyn.ui.console.commands.task.TaskCommand;
+import com.logdyn.ui.console.commands.task.TaskListCommand;
 import org.apache.log4j.Logger;
 import picocli.CommandLine;
 import picocli.CommandLine.ExecutionException;
@@ -44,6 +46,9 @@ public class Main {
                                     .addSubcommand("remove", new RepositoryRemoveCommand(), "-r")
                                     .addSubcommand("list", new RepositoryListCommand(), "-l"),
                             "repos")
+                    .addSubcommand("task", new CommandLine(new TaskCommand())
+                                    .addSubcommand("list", new TaskListCommand(), "-l"),
+                            "-t")
                     .addSubcommand("exit", new ExitCommand());
             commandLine.parseWithHandlers(new RunLast(), new CliExceptionHandler(), args);
             StorageController.save();
