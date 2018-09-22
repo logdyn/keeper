@@ -17,6 +17,21 @@ public class JiraRepositoryFactory implements RepositoryFactory {
     private static final String BASE_URL_KEY = "baseUrl"; //NON-NLS
     private static final String SERVER_TITLE_KEY = "serverTitle"; //NON-NLS
 
+    private static final JiraRepositoryFactory INSTANCE = new JiraRepositoryFactory();
+
+    private JiraRepositoryFactory() {
+
+    }
+
+    public static JiraRepositoryFactory getInstance() {
+        return INSTANCE;
+    }
+
+    @Override
+    public String getType() {
+        return "Jira";
+    }
+
     @Override
     public Optional<Repository> createRepository(final URL url) {
         return this.createRepository(url, null);
@@ -39,5 +54,10 @@ public class JiraRepositoryFactory implements RepositoryFactory {
             LOGGER.debug(String.format("Could not create JIRA Repository from URL: %s", url), e);
             return Optional.empty();
         }
+    }
+
+    @Override
+    public JiraRepository instantiateRepository(final URL url, final String name) {
+        return new JiraRepository(url, name);
     }
 }

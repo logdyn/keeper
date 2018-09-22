@@ -6,18 +6,18 @@ import com.logdyn.core.repository.factories.RepositoryFactory;
 import com.logdyn.core.task.Task;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Optional;
 
 public class RepositoryController {
-    private static Collection<RepositoryFactory> factories = new LinkedList<>();
+    private static Collection<RepositoryFactory> factories = new ArrayList<>();
     private static Collection<Repository> repositories = new HashSet<>();
 
     static {
-        factories.add(new JiraRepositoryFactory());
+        factories.add(JiraRepositoryFactory.getInstance());
     }
 
     public static Optional<Repository> addRepository(final URL url){
@@ -74,5 +74,15 @@ public class RepositoryController {
 
     public static void addRepositories(final Collection<Repository> repositories) {
         RepositoryController.repositories.addAll(repositories);
+    }
+
+    public static Optional<RepositoryFactory> getFactory(final String type){
+        return factories.stream()
+                .filter(factory -> factory.getType().equals(type))
+                .findAny();
+    }
+
+    public static boolean addRepository(final Repository repo){
+        return repositories.add(repo);
     }
 }
