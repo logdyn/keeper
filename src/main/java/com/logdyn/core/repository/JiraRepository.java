@@ -2,6 +2,7 @@ package com.logdyn.core.repository;
 
 import com.logdyn.core.authentication.AuthenticationRequiredException;
 import com.logdyn.core.authentication.Authenticator;
+import com.logdyn.core.repository.factories.JiraRepositoryFactory;
 import com.logdyn.core.task.Task;
 import com.logdyn.core.task.WorkLog;
 import org.apache.log4j.Logger;
@@ -47,6 +48,11 @@ public class JiraRepository extends Repository {
 
     public JiraRepository(final URL url, final String name, final Authenticator auth) {
         super(url, name, auth);
+    }
+
+    @Override
+    public String getType() {
+        return JiraRepositoryFactory.getInstance().getType();
     }
 
     @Override
