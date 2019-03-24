@@ -76,12 +76,6 @@ public class RepositoryController {
         RepositoryController.repositories.addAll(repositories);
     }
 
-    public static Optional<RepositoryFactory> getFactory(final String type){
-        return factories.stream()
-                .filter(factory -> factory.getType().equals(type))
-                .findAny();
-    }
-
     public static boolean addRepository(final Repository repo){
         return repositories.add(repo);
     }

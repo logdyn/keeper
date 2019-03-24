@@ -28,11 +28,6 @@ public class JiraRepositoryFactory implements RepositoryFactory {
     }
 
     @Override
-    public String getType() {
-        return "Jira";
-    }
-
-    @Override
     public Optional<Repository> createRepository(final URL url) {
         return this.createRepository(url, null);
     }

@@ -1,5 +1,7 @@
 package com.logdyn.core.repository;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.logdyn.core.authentication.AuthenticationRequiredException;
 import com.logdyn.core.authentication.Authenticator;
 import com.logdyn.core.task.Task;
@@ -12,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+@JsonTypeInfo(use=JsonTypeInfo.Id.NAME, property="type")
 public abstract class Repository {
     String name;
     URL url;
@@ -30,6 +33,12 @@ public abstract class Repository {
 
     public String getName() { return this.name; }
     public URL getUrl() { return this.url; }
+
+    public Authenticator getAuthenticator()
+    {
+        return this.auth;
+    }
+
     public void setAuthenticator(final Authenticator auth) { this.auth = auth; }
     public boolean isUrlMatch(final URL url) { return this.url.getHost().equals(url.getHost()); }
 
@@ -53,13 +62,21 @@ public abstract class Repository {
         this.tasks.put(task.getId(), task);
     }
 
-    abstract String getType();
     abstract String getTaskId(final URL url);
     abstract void submitTask(final Task task) throws AuthenticationRequiredException;
     abstract Optional<Task> getRemoteTask(final String id) throws AuthenticationRequiredException;
 
     public Collection<Task> getTasks() {
         return Collections.unmodifiableCollection(tasks.values());
+    }
+
+    @JsonSetter("tasks")
+    public void addTasks(final Collection<Task> tasks)
+    {
+        if (tasks != null)
+        {
+            tasks.forEach(this::addTask);
+        }
     }
 
     public void setName(final String repositoryName) {
