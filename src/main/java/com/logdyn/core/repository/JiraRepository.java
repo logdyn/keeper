@@ -1,10 +1,13 @@
 package com.logdyn.core.repository;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.logdyn.core.authentication.AuthenticationRequiredException;
 import com.logdyn.core.authentication.Authenticator;
+import com.logdyn.core.repository.dto.JiraWorkLog;
 import com.logdyn.core.task.Task;
-import com.logdyn.core.task.WorkLog;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,15 +15,12 @@ import org.json.JSONTokener;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class JiraRepository extends Repository {
@@ -37,10 +37,6 @@ public class JiraRepository extends Repository {
     private static final String POST_REQUEST_METHOD = "POST"; //NON-NLS
     private static final String CONTENT_TYPE_KEY = "Content-Type"; //NON-NLS
     private static final String JSON_CONTENT_TYPE = "application/json"; //NON-NLS
-    private static final DateTimeFormatter JIRA_TIME_FORMAT = DateTimeFormatter.ofPattern("yyy-MM-dd'T'HH:mm:ss.SSSxxxx"); //NON-NLS
-    private static final String WORKLOG_START_TIME_KEY = "started"; //NON-NLS
-    private static final String WORKLOG_DURATION_KEY = "timeSpentSeconds"; //NON-NLS
-    private static final String WORKLOG_DESC_KEY = "comment"; //NON-NLS
 
     public JiraRepository(final URL url, final String name) {
         super(url, name);
@@ -106,9 +102,8 @@ public class JiraRepository extends Repository {
             conn.setRequestMethod(POST_REQUEST_METHOD);
             conn.setDoOutput(true);
             conn.setRequestProperty(CONTENT_TYPE_KEY, JSON_CONTENT_TYPE);
-            try (final Writer writer = new OutputStreamWriter(conn.getOutputStream())) {
-                final JSONObject json = toJson(task.getCurrentWorkLog());
-                json.write(writer);
+            try (final OutputStream outputStream = conn.getOutputStream()) {
+                new ObjectMapper().writeValue(outputStream, new JiraWorkLog(task.getCurrentWorkLog()));
             }
             final int resCode = conn.getResponseCode();
             if (resCode == 401){
@@ -122,17 +117,5 @@ public class JiraRepository extends Repository {
             LOGGER.debug(String.format("IOException when submitting WorkLog to Task '%s' in Jira Repository '%s'", task.getId(), this.name), ioe);
             throw new UncheckedIOException(ioe);
         }
-    }
-
-    private JSONObject toJson(final WorkLog workLog)
-    {
-        final JSONObject json = new JSONObject();
-        final Instant instant = Instant.ofEpochMilli(workLog.getTimer().getStartTime());
-        final ZonedDateTime dateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.systemDefault());
-        final String formattedDateTime = JIRA_TIME_FORMAT.format(dateTime);
-        json.put(WORKLOG_START_TIME_KEY, formattedDateTime);
-        json.put(WORKLOG_DURATION_KEY, workLog.getTimer().getDuration() / 1000);
-        json.put(WORKLOG_DESC_KEY, workLog.getComment());
-        return json;
     }
 }

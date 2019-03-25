@@ -1,6 +1,7 @@
 package com.logdyn.core.repository;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.logdyn.core.authentication.AuthenticationRequiredException;
 import com.logdyn.core.authentication.Authenticator;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JsonTypeInfo(use=JsonTypeInfo.Id.NAME, property="type")
+@JsonSubTypes({@JsonSubTypes.Type(JiraRepository.class)})
 public abstract class Repository {
     String name;
     URL url;
