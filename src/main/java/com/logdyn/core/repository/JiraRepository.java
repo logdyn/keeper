@@ -2,29 +2,26 @@ package com.logdyn.core.repository;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.logdyn.core.authentication.AuthenticationRequiredException;
 import com.logdyn.core.authentication.Authenticator;
 import com.logdyn.core.repository.dto.JiraWorkLog;
 import com.logdyn.core.task.Task;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
-import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Optional;
 
 public class JiraRepository extends Repository {
-    private static final Logger LOGGER = Logger.getLogger(JiraRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JiraRepository.class);
 
     private static final String API_PATH = "/rest/api/2"; //NON-NLS
     private static final String ISSUE_PATH = API_PATH + "/issue/"; //NON-NLS

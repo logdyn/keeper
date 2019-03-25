@@ -1,6 +1,7 @@
 package com.logdyn.ui.console;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.io.InputStreamReader;
  */
 public final class ConsoleUtils {
 
-    private static Logger LOGGER = Logger.getLogger(ConsoleUtils.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ConsoleUtils.class);
 
     private ConsoleUtils() {throw new AssertionError();}
 

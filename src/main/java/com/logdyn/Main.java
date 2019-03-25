@@ -9,7 +9,12 @@ import com.logdyn.ui.console.commands.repository.RepositoryAddCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryListCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryRemoveCommand;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.Banner;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import picocli.CommandLine;
 import picocli.CommandLine.ExecutionException;
 import picocli.CommandLine.IExceptionHandler2;
@@ -24,12 +29,24 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-public class Main {
-    private static Logger LOGGER = Logger.getLogger(Main.class);
+@SpringBootApplication
+public class Main implements CommandLineRunner
+{
+    private static Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static boolean isFirstRun = true;
 
 
-    public static void main(final String... args) throws Exception {
+    public static void main(final String... args)
+    {
+        final SpringApplication springApplication = new SpringApplication(Main.class);
+        springApplication.setBannerMode(Banner.Mode.OFF);
+        springApplication.setLogStartupInfo(false);
+        springApplication.run(args);
+    }
+
+    @Override
+    public void run(final String... args) throws Exception
+    {
         try {
             if (isFirstRun) {
                 isFirstRun = false;
@@ -46,7 +63,6 @@ public class Main {
                             "repos")
                     .addSubcommand("exit", new ExitCommand());
             commandLine.parseWithHandlers(new RunLast(), new CliExceptionHandler(), args);
-            StorageController.save();
         } catch (Exception e) {
             LOGGER.error("Error thrown by Main method", e);
             throw e;

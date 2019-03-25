@@ -2,9 +2,10 @@ package com.logdyn.core.repository.factories;
 
 import com.logdyn.core.repository.JiraRepository;
 import com.logdyn.core.repository.Repository;
-import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +13,7 @@ import java.net.URL;
 import java.util.Optional;
 
 public class JiraRepositoryFactory implements RepositoryFactory {
-    private static final Logger LOGGER = Logger.getLogger(JiraRepositoryFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JiraRepositoryFactory.class);
     private static final String SERVER_INFO_PATH = "/rest/api/2/serverInfo"; //NON-NLS
     private static final String BASE_URL_KEY = "baseUrl"; //NON-NLS
     private static final String SERVER_TITLE_KEY = "serverTitle"; //NON-NLS
