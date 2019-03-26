@@ -9,12 +9,15 @@ import com.logdyn.ui.console.commands.repository.RepositoryAddCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryListCommand;
 import com.logdyn.ui.console.commands.repository.RepositoryRemoveCommand;
+import com.logdyn.ui.javafx.FxApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import picocli.CommandLine;
 import picocli.CommandLine.ExecutionException;
 import picocli.CommandLine.IExceptionHandler2;
@@ -35,6 +38,8 @@ public class Main implements CommandLineRunner
     private static Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static boolean isFirstRun = true;
 
+    @Autowired
+    private ConfigurableApplicationContext context;
 
     public static void main(final String... args)
     {
@@ -47,6 +52,7 @@ public class Main implements CommandLineRunner
     @Override
     public void run(final String... args) throws Exception
     {
+        FxApplication.setContext(context);
         try {
             if (isFirstRun) {
                 isFirstRun = false;
