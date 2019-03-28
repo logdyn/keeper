@@ -3,17 +3,26 @@ package com.logdyn.ui.console.commands;
 import com.logdyn.Main;
 import com.logdyn.SystemConfig;
 import com.logdyn.ui.console.ConsoleUtils;
+import com.logdyn.ui.console.commands.repository.RepositoryCommand;
 import com.logdyn.ui.javafx.FxApplication;
 import javafx.application.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+@Component
 @Command(name = "keeper",
-        description = "Entry point for the Keeper command line", subcommands = HelpCommand.class)
+        description = "Entry point for the Keeper command line",
+        subcommands = {
+                RepositoryCommand.class,
+                ExitCommand.class,
+                HelpCommand.class})
 public class KeeperCommand extends CliCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeeperCommand.class);
 
@@ -34,14 +43,23 @@ public class KeeperCommand extends CliCommand {
     @Parameters
     private String[] args;
 
+    @Autowired
+    private ConfigurableApplicationContext context;
+
+    @Autowired
+    private SystemConfig systemConfig;
+
+    @Autowired
+    private Main main;
+
     @Override
     public void run() {
         if (interactiveFlag && !INTERACTIVE_MODE) {
             INTERACTIVE_MODE = true;
-            System.out.printf("Keeper: %s%n", SystemConfig.VERSION);
+            System.out.printf("Keeper: %s%n", systemConfig.getVersion()[0]);
             while (true){
                 try{
-                    Main.main(ConsoleUtils.prompt().split("\\s"));
+                    main.run(ConsoleUtils.prompt().split("\\s"));
                 } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
                     System.out.println("Something went wrong: " + e.getLocalizedMessage());
@@ -49,6 +67,7 @@ public class KeeperCommand extends CliCommand {
             }
         }
         else if (this.gui || (System.console() == null && !cli)) {
+            FxApplication.setContext(context);
             Application.launch(FxApplication.class, this.args);
         }
         else {

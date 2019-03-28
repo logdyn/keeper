@@ -4,6 +4,7 @@ import com.logdyn.core.repository.Repository;
 import com.logdyn.core.repository.RepositoryController;
 import com.logdyn.ui.console.ConsoleUtils;
 import com.logdyn.ui.console.commands.CliCommand;
+import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 @Command(name = "remove", description = "Removes any repositories matching the given names or URLs")
 public class RepositoryRemoveCommand extends CliCommand {
 

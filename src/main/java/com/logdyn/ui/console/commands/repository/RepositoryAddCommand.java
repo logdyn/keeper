@@ -3,12 +3,14 @@ package com.logdyn.ui.console.commands.repository;
 import com.logdyn.core.repository.Repository;
 import com.logdyn.core.repository.RepositoryController;
 import com.logdyn.ui.console.commands.CliCommand;
+import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
 import java.net.URL;
 import java.util.Optional;
 
+@Component
 @Command(name = "add", description = "Add a remote repository")
 public class RepositoryAddCommand extends CliCommand {
 

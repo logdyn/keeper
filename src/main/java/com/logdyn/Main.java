@@ -25,6 +25,7 @@ import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.ParseResult;
 import picocli.CommandLine.RunLast;
 
+import javax.annotation.PostConstruct;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -36,43 +37,33 @@ import java.util.List;
 public class Main implements CommandLineRunner
 {
     private static Logger LOGGER = LoggerFactory.getLogger(Main.class);
-    private static boolean isFirstRun = true;
 
     @Autowired
     private ConfigurableApplicationContext context;
 
+    @Autowired
+    private KeeperCommand keeperCommand;
+
     public static void main(final String... args)
     {
         final SpringApplication springApplication = new SpringApplication(Main.class);
-        springApplication.setBannerMode(Banner.Mode.OFF);
         springApplication.setLogStartupInfo(false);
         springApplication.run(args);
     }
 
-    @Override
-    public void run(final String... args) throws Exception
+    @PostConstruct
+    public void init() throws KeyManagementException, NoSuchAlgorithmException
     {
-        FxApplication.setContext(context);
-        try {
-            if (isFirstRun) {
-                isFirstRun = false;
-                addSSLVerifier(new InteractiveTrustManager());
-                StorageController.load();
-                Runtime.getRuntime().addShutdownHook(new Thread(StorageController::save, "Shutdown Save Hook"));
+        addSSLVerifier(new InteractiveTrustManager());
+        StorageController.load();
+        Runtime.getRuntime().addShutdownHook(new Thread(StorageController::save, "Shutdown Save Hook"));
+    }
 
-            }
-            final CommandLine commandLine = new CommandLine(new KeeperCommand())
-                    .addSubcommand("repository", new CommandLine(new RepositoryCommand())
-                                    .addSubcommand("add", new RepositoryAddCommand(), "-a")
-                                    .addSubcommand("remove", new RepositoryRemoveCommand(), "-r")
-                                    .addSubcommand("list", new RepositoryListCommand(), "-l"),
-                            "repos")
-                    .addSubcommand("exit", new ExitCommand());
-            commandLine.parseWithHandlers(new RunLast(), new CliExceptionHandler(), args);
-        } catch (Exception e) {
-            LOGGER.error("Error thrown by Main method", e);
-            throw e;
-        }
+    @Override
+    public void run(final String... args)
+    {
+        new CommandLine(keeperCommand, context::getBean)
+                .parseWithHandlers(new RunLast(), new CliExceptionHandler(), args);
     }
 
     private static void addSSLVerifier(final TrustManager trustManager) throws NoSuchAlgorithmException, KeyManagementException {
