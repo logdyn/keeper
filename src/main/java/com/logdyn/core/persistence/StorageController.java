@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.FileSystemException;
+import java.util.Date;
 
 public final class StorageController {
     private static final String FILEPATH = System.getProperty("user.home") + "/.keeper/state.xml"; //NON-NLS
@@ -32,7 +33,7 @@ public final class StorageController {
             final XmlMapper xmlMapper = new XmlMapper();
             xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
             xmlMapper.enable(ToXmlGenerator.Feature.WRITE_XML_DECLARATION);
-            xmlMapper.writeValue(file, new State(1, RepositoryController.getRepositories()));
+            xmlMapper.writeValue(file, new State(RepositoryController.getRepositories(), 1, new Date()));
         }
         catch (final IOException e)
         {
