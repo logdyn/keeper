@@ -44,6 +44,9 @@ public class Main implements CommandLineRunner
     @Autowired
     private KeeperCommand keeperCommand;
 
+    @Autowired
+    private StorageController storageController;
+
     public static void main(final String... args)
     {
         final SpringApplication springApplication = new SpringApplication(Main.class);
@@ -55,8 +58,8 @@ public class Main implements CommandLineRunner
     public void init() throws KeyManagementException, NoSuchAlgorithmException
     {
         addSSLVerifier(new InteractiveTrustManager());
-        StorageController.load();
-        Runtime.getRuntime().addShutdownHook(new Thread(StorageController::save, "Shutdown Save Hook"));
+        storageController.load();
+        Runtime.getRuntime().addShutdownHook(new Thread(storageController::save, "Shutdown Save Hook"));
     }
 
     @Override
