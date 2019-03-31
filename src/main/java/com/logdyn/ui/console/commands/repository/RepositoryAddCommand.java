@@ -21,9 +21,16 @@ public class RepositoryAddCommand extends CliCommand {
             arity = "0..1", paramLabel = "REPOSITORY_NAME")
     private String repositoryName;
 
+    private final RepositoryController repositoryController;
+
+    public RepositoryAddCommand(final RepositoryController repositoryController)
+    {
+        this.repositoryController = repositoryController;
+    }
+
     @Override
     public void run() {
-        final Optional<Repository> repo = RepositoryController.addRepository(repositoryUrl);
+        final Optional<? extends Repository> repo = repositoryController.addRepository(repositoryUrl);
         if (repositoryName != null) {
             repo.ifPresent(repository -> repository.setName(repositoryName));
         }

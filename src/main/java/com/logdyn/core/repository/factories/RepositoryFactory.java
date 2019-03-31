@@ -5,10 +5,10 @@ import com.logdyn.core.repository.Repository;
 import java.net.URL;
 import java.util.Optional;
 
-public interface RepositoryFactory {
-    Optional<Repository> createRepository(final URL url);
+public interface RepositoryFactory<T extends Repository> {
+    Optional<T> createRepository(final URL url);
 
-    Optional<Repository> createRepository(final URL url, final String name);
+    Optional<T> createRepository(final URL url, final String name);
 
-    Repository instantiateRepository(final URL url, final String name);
+    T instantiateRepository(final URL url, final String name);
 }

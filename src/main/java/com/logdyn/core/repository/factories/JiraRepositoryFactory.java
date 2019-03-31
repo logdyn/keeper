@@ -6,35 +6,27 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Optional;
 
-public class JiraRepositoryFactory implements RepositoryFactory {
+@Component
+public class JiraRepositoryFactory implements RepositoryFactory<JiraRepository> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraRepositoryFactory.class);
     private static final String SERVER_INFO_PATH = "/rest/api/2/serverInfo"; //NON-NLS
     private static final String BASE_URL_KEY = "baseUrl"; //NON-NLS
     private static final String SERVER_TITLE_KEY = "serverTitle"; //NON-NLS
 
-    private static final JiraRepositoryFactory INSTANCE = new JiraRepositoryFactory();
-
-    private JiraRepositoryFactory() {
-
-    }
-
-    public static JiraRepositoryFactory getInstance() {
-        return INSTANCE;
-    }
-
     @Override
-    public Optional<Repository> createRepository(final URL url) {
+    public Optional<JiraRepository> createRepository(final URL url) {
         return this.createRepository(url, null);
     }
 
     @Override
-    public Optional<Repository> createRepository(final URL url, final String name) {
+    public Optional<JiraRepository> createRepository(final URL url, final String name) {
         try (final InputStream stream = new URL(url, SERVER_INFO_PATH).openStream())
         {
             final JSONObject json = new JSONObject(new JSONTokener(stream));

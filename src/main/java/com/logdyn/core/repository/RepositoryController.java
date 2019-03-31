@@ -1,30 +1,31 @@
 package com.logdyn.core.repository;
 
 import com.logdyn.core.authentication.AuthenticationRequiredException;
-import com.logdyn.core.repository.factories.JiraRepositoryFactory;
 import com.logdyn.core.repository.factories.RepositoryFactory;
 import com.logdyn.core.task.Task;
+import org.springframework.stereotype.Service;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 
+@Service
 public class RepositoryController {
-    private static Collection<RepositoryFactory> factories = new ArrayList<>();
-    private static Collection<Repository> repositories = new HashSet<>();
+    private final Collection<RepositoryFactory<? extends Repository>> factories;
+    private final Collection<Repository> repositories = new HashSet<>();
 
-    static {
-        factories.add(JiraRepositoryFactory.getInstance());
+    public RepositoryController(final Collection<RepositoryFactory<? extends Repository>> factories)
+    {
+        this.factories = factories;
     }
 
-    public static Optional<Repository> addRepository(final URL url){
+    public Optional<? extends Repository> addRepository(final URL url){
         return addRepository(url, null);
     }
 
-    public static Optional<Repository> addRepository(final URL url, final String name) {
+    public Optional<? extends Repository> addRepository(final URL url, final String name) {
         final Optional<Repository> repo = factories.stream()
                 .map(factory -> factory.createRepository(url, name))
                 .filter(Optional::isPresent)
@@ -34,29 +35,29 @@ public class RepositoryController {
         return repo.filter(repositories::add);
     }
 
-    public static boolean removeRepository(final Repository repository)
+    public boolean removeRepository(final Repository repository)
     {
         return repositories.remove(repository);
     }
 
-    public static Optional<Repository> getRepository(final URL url) {
-        return Optional.ofNullable(repositories.stream()
+    public Optional<Repository> getRepository(final URL url) {
+        return repositories.stream()
                 .filter(repository -> repository.isUrlMatch(url))
                 .findAny()
-                .orElseGet(() -> addRepository(url).orElse(null)));
+                .or(() -> addRepository(url));
     }
 
-    public static Optional<Repository> getRepository(final String name) {
+    public Optional<Repository> getRepository(final String name) {
         return repositories.stream()
                 .filter(repository -> repository.getName().equals(name))
                 .findAny();
     }
 
-    public static Collection<Repository> getRepositories() {
+    public Collection<Repository> getRepositories() {
         return Collections.unmodifiableCollection(repositories);
     }
 
-    public static Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
+    public Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
         Optional<Repository> repo = getRepository(url);
         if (repo.isPresent()) {
             return repo.get().getTask(url);
@@ -64,7 +65,7 @@ public class RepositoryController {
         return Optional.empty();
     }
 
-    public static Optional<Task> getTask(final String repoName, final String taskName) throws AuthenticationRequiredException {
+    public Optional<Task> getTask(final String repoName, final String taskName) throws AuthenticationRequiredException {
         Optional<Repository> repository = getRepository(repoName);
         if (repository.isPresent()) {
             return repository.get().getTask(taskName);
@@ -72,11 +73,11 @@ public class RepositoryController {
         return Optional.empty();
     }
 
-    public static void addRepositories(final Collection<Repository> repositories) {
-        RepositoryController.repositories.addAll(repositories);
+    public boolean addRepositories(final Collection<Repository> repositories) {
+        return this.repositories.addAll(repositories);
     }
 
-    public static boolean addRepository(final Repository repo){
+    public boolean addRepository(final Repository repo){
         return repositories.add(repo);
     }
 }
