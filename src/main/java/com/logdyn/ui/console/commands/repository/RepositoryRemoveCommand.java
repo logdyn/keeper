@@ -30,24 +30,29 @@ public class RepositoryRemoveCommand extends CliCommand {
     @Option(names = {"-f", "--force"}, description = "Does not prompt before removal of repository")
     private boolean force;
 
+    private final RepositoryController repositoryController;
+
+    public RepositoryRemoveCommand(final RepositoryController repositoryController)
+    {
+        this.repositoryController = repositoryController;
+    }
+
     @Override
     public void run() {
 
         final Collection<Repository> removalList;
         if (all) {
-            removalList = new ArrayList<>(RepositoryController.getRepositories());
+            removalList = new ArrayList<>(this.repositoryController.getRepositories());
         }
         else{
             removalList = new ArrayList<>(repositoryName.size() + repositoryUrl.size());
             repositoryName.stream()
-                    .map(RepositoryController::getRepository)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
+                    .map(repositoryController::getRepository)
+                    .flatMap(Optional::stream)
                     .forEach(removalList::add);
             repositoryUrl.stream()
-                    .map(RepositoryController::getRepository)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
+                    .map(repositoryController::getRepository)
+                    .flatMap(Optional::stream)
                     .forEach(removalList::add);
         }
 
@@ -56,7 +61,7 @@ public class RepositoryRemoveCommand extends CliCommand {
             removalList.removeIf(repository -> !ConsoleUtils.promptBoolean("Remove repository: %s?", repository));
         }
 
-        removalList.forEach(RepositoryController::removeRepository);
+        removalList.forEach(repositoryController::removeRepository);
 
         System.out.printf("Removed %d repositories%n", removalList.size());
     }

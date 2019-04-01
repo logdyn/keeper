@@ -3,10 +3,17 @@ package com.logdyn;
 
 import com.logdyn.core.authentication.ssl.InteractiveTrustManager;
 import com.logdyn.core.persistence.StorageController;
+import com.logdyn.ui.console.commands.ExitCommand;
 import com.logdyn.ui.console.commands.KeeperCommand;
+import com.logdyn.ui.console.commands.repository.RepositoryAddCommand;
+import com.logdyn.ui.console.commands.repository.RepositoryCommand;
+import com.logdyn.ui.console.commands.repository.RepositoryListCommand;
+import com.logdyn.ui.console.commands.repository.RepositoryRemoveCommand;
+import com.logdyn.ui.javafx.FxApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,6 +44,9 @@ public class Main implements CommandLineRunner
     @Autowired
     private KeeperCommand keeperCommand;
 
+    @Autowired
+    private StorageController storageController;
+
     public static void main(final String... args)
     {
         final SpringApplication springApplication = new SpringApplication(Main.class);
@@ -48,8 +58,8 @@ public class Main implements CommandLineRunner
     public void init() throws KeyManagementException, NoSuchAlgorithmException
     {
         addSSLVerifier(new InteractiveTrustManager());
-        StorageController.load();
-        Runtime.getRuntime().addShutdownHook(new Thread(StorageController::save, "Shutdown Save Hook"));
+        storageController.load();
+        Runtime.getRuntime().addShutdownHook(new Thread(storageController::save, "Shutdown Save Hook"));
         if ("Windows 10".equalsIgnoreCase(System.getProperty("os.name")))
         {
             System.setProperty("picocli.ansi", "true");

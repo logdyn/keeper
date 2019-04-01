@@ -23,24 +23,29 @@ public class RepositoryListCommand extends CliCommand {
     @Option(names = "-u", description = "Get all repositories with matching URL", paramLabel = "REPOSITORY_URL")
     private List<URL> repositoryUrl = new ArrayList<>();
 
+    private final RepositoryController repositoryController;
+
+    public RepositoryListCommand(final RepositoryController repositoryController)
+    {
+        this.repositoryController = repositoryController;
+    }
+
     @Override
     public void run() {
 
         final Collection<Repository> repos;
         if (repositoryName.isEmpty() && repositoryUrl.isEmpty()) {
-            repos = RepositoryController.getRepositories();
+            repos = this.repositoryController.getRepositories();
         }
         else{
             repos = new ArrayList<>(repositoryName.size() + repositoryUrl.size());
             repositoryName.stream()
-                    .map(RepositoryController::getRepository)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
+                    .map(repositoryController::getRepository)
+                    .flatMap(Optional::stream)
                     .forEach(repos::add);
             repositoryUrl.stream()
-                    .map(RepositoryController::getRepository)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
+                    .map(repositoryController::getRepository)
+                    .flatMap(Optional::stream)
                     .forEach(repos::add);
         }
         repos.forEach(System.out::println);
