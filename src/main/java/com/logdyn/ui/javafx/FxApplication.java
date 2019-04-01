@@ -1,8 +1,8 @@
 package com.logdyn.ui.javafx;
 
 import javafx.application.Application;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +29,12 @@ public class FxApplication extends Application
     @Override
     public void start(final Stage primaryStage) throws Exception {
         LOGGER.debug("Starting JavaFX Application...");
-        new Alert(AlertType.INFORMATION, "blarg").showAndWait();
-        this.stop();
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        fxmlLoader.setControllerFactory(context::getBean);
+
+        primaryStage.setScene(new Scene(fxmlLoader.load()));
+        primaryStage.setTitle("Keeper");
+        primaryStage.show();
     }
 
     @Override
