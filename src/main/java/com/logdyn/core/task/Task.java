@@ -1,5 +1,6 @@
 package com.logdyn.core.task;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,6 +19,7 @@ public class Task {
         this(id, title, description, url, new WorkLog());
     }
 
+    @JsonCreator
     public Task(final String id, final String title, final String description, final URL url, final WorkLog workLog)
     {
         this.id = id;
