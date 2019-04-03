@@ -4,12 +4,12 @@
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="200" prefWidth="220" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.logdyn.ui.javafx.MainController">
+<AnchorPane prefHeight="75" prefWidth="220" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.logdyn.ui.javafx.MainController">
    <children>
       <TreeTableView fx:id="table" prefHeight="200.0" prefWidth="220" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
         <columns>
-          <TreeTableColumn prefWidth="110" text="Name" />
-          <TreeTableColumn prefWidth="110" text="Time" />
+          <TreeTableColumn fx:id="nameCol" prefWidth="100" text="Name" />
+          <TreeTableColumn fx:id="timeCol" prefWidth="100" text="Time" />
         </columns>
       </TreeTableView>
    </children>

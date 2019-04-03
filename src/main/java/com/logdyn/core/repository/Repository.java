@@ -42,7 +42,10 @@ public abstract class Repository {
     }
 
     public void setAuthenticator(final Authenticator auth) { this.auth = auth; }
-    public boolean isUrlMatch(final URL url) { return this.url.getHost().equals(url.getHost()); }
+    public boolean isUrlMatch(final URL url)
+    {
+        return this.url.getPort() == url.getPort() && this.url.getHost().equals(url.getHost());
+    }
 
     public Optional<Task> getTask(final URL url) throws AuthenticationRequiredException {
         if (!isUrlMatch(url)){
