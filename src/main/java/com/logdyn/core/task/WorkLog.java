@@ -1,27 +1,25 @@
 package com.logdyn.core.task;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 public class WorkLog {
-    private StringProperty comment;
-    private Timer timer;
+    private final Timer timer;
+    private String comment;
 
     public WorkLog() {
         this(System.currentTimeMillis(), 0, "");
     }
 
     public WorkLog(final long start, final long duration, final String comment) {
-        this.comment = new SimpleStringProperty(this, "comment", comment); //NON-NLS
+        this.comment = comment;
         this.timer = new Timer(start, duration);
     }
 
     public String getComment() {
-        return comment.get();
+        return comment;
     }
 
-    public StringProperty commentProperty() {
-        return comment;
+    public void setComment(final String comment)
+    {
+        this.comment = comment;
     }
 
     public Timer getTimer() {
