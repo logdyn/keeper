@@ -3,7 +3,7 @@ package com.logdyn.core.task.timer;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.OptionalLong;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -39,9 +39,9 @@ class SingleTimerTest
         final AtomicLong fakeTime = new AtomicLong(new Random().nextLong());
         final SingleTimer timer = new SingleTimer(List.of(), fakeTime::incrementAndGet);
 
-        OptionalLong startVal = timer.start();
+        Optional<Long> startVal = timer.start();
         assertTrue(startVal.isPresent());
-        assertEquals(fakeTime.get(), startVal.getAsLong());
+        assertEquals(fakeTime.get(), startVal.get());
 
         startVal = timer.start();
         assertFalse(startVal.isPresent());
@@ -53,13 +53,13 @@ class SingleTimerTest
         final AtomicLong fakeTime = new AtomicLong(new Random().nextLong());
         final SingleTimer timer = new SingleTimer(List.of(), fakeTime::incrementAndGet);
 
-        OptionalLong stopVal = timer.stop();
+        Optional<Long> stopVal = timer.stop();
         assertFalse(stopVal.isPresent());
 
         timer.start();
         stopVal = timer.stop();
         assertTrue(stopVal.isPresent());
-        assertEquals(fakeTime.get(), stopVal.getAsLong());
+        assertEquals(fakeTime.get(), stopVal.get());
 
         stopVal = timer.stop();
         assertFalse(stopVal.isPresent());
@@ -88,7 +88,7 @@ class SingleTimerTest
             timer.start();
             timer.stop();
         }
-        assertEquals(duration, timer.duration());
+        assertEquals(duration, timer.getDuration());
     }
 
     @Test

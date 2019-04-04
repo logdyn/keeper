@@ -20,7 +20,7 @@ public class JiraWorkLog
 
     public String getStarted()
     {
-        final Instant instant = Instant.ofEpochMilli(workLog.getTimer().getStartTime());
+        final Instant instant = Instant.ofEpochMilli(workLog.getTimer().getStartTime().orElse(0L));
         final ZonedDateTime dateTime = ZonedDateTime.ofInstant(instant, ZoneOffset.systemDefault());
         return JIRA_TIME_FORMAT.format(dateTime);
     }

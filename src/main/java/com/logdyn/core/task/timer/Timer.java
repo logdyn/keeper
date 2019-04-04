@@ -10,13 +10,13 @@ public interface Timer
 
     boolean hasStarted();
 
-    OptionalLong stop();
+    Optional<Long> stop();
 
-    long duration();
+    long getDuration();
 
-    OptionalLong startTime();
+    Optional<Long> getStartTime();
 
-    OptionalLong endTime();
+    Optional<Long> getEndTime();
 
     List<Long> getTimes();
 }

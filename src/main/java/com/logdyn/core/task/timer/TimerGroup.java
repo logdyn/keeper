@@ -1,7 +1,8 @@
 package com.logdyn.core.task.timer;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.OptionalLong;
+import java.util.Optional;
 import java.util.function.LongSupplier;
 import java.util.stream.Collectors;
 
@@ -39,48 +40,47 @@ public class TimerGroup implements Timer
     }
 
     @Override
-    public OptionalLong stop()
+    public Optional<Long> stop()
     {
         return this.timers.stream()
                 .map(Timer::stop)
-                .filter(OptionalLong::isPresent)
-                .mapToLong(OptionalLong::getAsLong)
+                .flatMap(Optional::stream)
                 .findAny();
     }
 
     @Override
-    public long duration()
+    public long getDuration()
     {
         return this.timers.stream()
-                .mapToLong(Timer::duration)
-                .sum();
+                .map(Timer::getDuration)
+                .reduce(Long::sum)
+                .orElse(0L);
     }
 
     @Override
-    public OptionalLong startTime()
+    public Optional<Long> getStartTime()
     {
         return this.timers.stream()
-                .map(Timer::startTime)
-                .filter(OptionalLong::isPresent)
-                .mapToLong(OptionalLong::getAsLong)
-                .min();
+                .map(Timer::getStartTime)
+                .flatMap(Optional::stream)
+                .reduce(Long::min);
     }
 
     @Override
-    public OptionalLong endTime()
+    public Optional<Long> getEndTime()
     {
         return this.timers.stream()
-                .map(Timer::endTime)
-                .filter(OptionalLong::isPresent)
-                .mapToLong(OptionalLong::getAsLong)
-                .max();
+                .map(Timer::getEndTime)
+                .flatMap(Optional::stream)
+                .reduce(Long::max);
     }
 
     @Override
     public List<Long> getTimes()
     {
         return this.timers.stream()
-                .flatMap(t -> t.getTimes().stream())
+                .map(Timer::getTimes)
+                .flatMap(Collection::stream)
                 .sorted()
                 .distinct()
                 .collect(Collectors.toList());
