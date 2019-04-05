@@ -10,11 +10,21 @@ public class BasicAuthenticator implements Authenticator {
     private final String headerValue;
 
     public BasicAuthenticator(final String username, final String password) {
-        this.headerValue = BASIC_AUTH_PREFIX + Base64.getEncoder().encodeToString((username + ':' + password).getBytes());
+        this(Base64.getEncoder().encodeToString((username + ':' + password).getBytes()));
+    }
+
+    public BasicAuthenticator(final String encoded)
+    {
+        this.headerValue = encoded;
     }
 
     @Override
     public void authenticate(final HttpURLConnection conn) {
-        conn.setRequestProperty(BASIC_AUTH_KEY, this.headerValue);
+        conn.setRequestProperty(BASIC_AUTH_KEY, BASIC_AUTH_PREFIX + this.headerValue);
+    }
+
+    public String getEncoded()
+    {
+        return this.headerValue;
     }
 }
