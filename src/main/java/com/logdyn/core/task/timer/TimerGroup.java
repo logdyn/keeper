@@ -1,5 +1,7 @@
 package com.logdyn.core.task.timer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -75,6 +77,7 @@ public class TimerGroup implements Timer
                 .reduce(Long::max);
     }
 
+    @JsonIgnore
     @Override
     public List<Long> getTimes()
     {

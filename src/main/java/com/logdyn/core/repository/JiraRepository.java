@@ -100,7 +100,7 @@ public class JiraRepository extends Repository {
             conn.setDoOutput(true);
             conn.setRequestProperty(CONTENT_TYPE_KEY, JSON_CONTENT_TYPE);
             try (final OutputStream outputStream = conn.getOutputStream()) {
-                new ObjectMapper().writeValue(outputStream, new JiraWorkLog(task.getCurrentWorkLog()));
+                new ObjectMapper().writeValue(outputStream, new JiraWorkLog(task.getWorkLog()));
             }
             final int resCode = conn.getResponseCode();
             if (resCode == 401){

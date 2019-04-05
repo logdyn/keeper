@@ -62,7 +62,7 @@ public class MainController
             final Object value = param.getValue().getValue();
             if (value instanceof Task)
             {
-                return new SimpleStringProperty(String.valueOf(((Task) value).getCurrentWorkLog().getTimer().getDuration()));
+                return new SimpleStringProperty(String.valueOf(((Task) value).getWorkLog().getTimer().getDuration()));
             }
             else
             {

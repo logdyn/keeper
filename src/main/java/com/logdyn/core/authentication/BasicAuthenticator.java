@@ -1,5 +1,7 @@
 package com.logdyn.core.authentication;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.net.HttpURLConnection;
 import java.util.Base64;
 
@@ -13,6 +15,7 @@ public class BasicAuthenticator implements Authenticator {
         this(Base64.getEncoder().encodeToString((username + ':' + password).getBytes()));
     }
 
+    @JsonCreator
     public BasicAuthenticator(final String encoded)
     {
         this.headerValue = encoded;

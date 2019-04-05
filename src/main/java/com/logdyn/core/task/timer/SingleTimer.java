@@ -1,5 +1,7 @@
 package com.logdyn.core.task.timer;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +21,7 @@ public class SingleTimer implements Timer
         this.timeSupplier = System::currentTimeMillis;
     }
 
+    @JsonCreator
     public SingleTimer(final Collection<Long> times)
     {
         this(times, System::currentTimeMillis);
@@ -26,7 +29,7 @@ public class SingleTimer implements Timer
 
     public SingleTimer(final Collection<Long> times, final LongSupplier timeSupplier)
     {
-        this.times = new ArrayList<>(times);
+        this.times = times == null ? new ArrayList<>() : new ArrayList<>(times);
         this.timeSupplier = timeSupplier;
     }
 
