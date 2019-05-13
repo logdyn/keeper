@@ -49,6 +49,7 @@ public class Main implements CommandLineRunner
 
     public static void main(final String... args)
     {
+        System.out.println(Main.class.getModule().getName());
         final SpringApplication springApplication = new SpringApplication(Main.class);
         springApplication.setLogStartupInfo(false);
         springApplication.run(args);

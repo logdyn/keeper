@@ -5,6 +5,7 @@ import com.logdyn.core.authentication.Authenticator;
 import com.logdyn.core.repository.Repository;
 import com.logdyn.core.repository.RepositoryController;
 import com.logdyn.core.task.Task;
+import com.logdyn.ui.javafx.utils.TaskSelectionModel;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextInputDialog;
@@ -43,6 +44,7 @@ public class MainController
     @FXML
     private void initialize()
     {
+        table.setSelectionModel(new TaskSelectionModel(table));
         nameCol.setCellValueFactory(param -> {
             final Object value = param.getValue().getValue();
             if (value instanceof Task)
@@ -69,7 +71,6 @@ public class MainController
                 return null;
             }
         });
-
         this.table.setShowRoot(false);
         fillTable();
         setEvents();
@@ -88,7 +89,14 @@ public class MainController
             }
             root.getChildren().add(repositoryTreeItem);
         }
-        this.table.setRoot(root);
+        if (root.getChildren().size() == 1)
+        {
+            this.table.setRoot(root.getChildren().get(0));
+        }
+        else
+        {
+            this.table.setRoot(root);
+        }
     }
 
     private void setEvents()

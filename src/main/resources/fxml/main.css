@@ -1,0 +1,26 @@
+.tree-table-row-cell {
+    -fx-background-color: pink;
+    -fx-table-cell-border-color: black transparent transparent transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: transparent transparent black transparent;
+}
+.tree-table-row-cell:hover {
+    -fx-background-color: lightyellow;
+    -fx-cursor: hand;
+}
+.tree-table-row-cell:selected {
+    -fx-background-color: lightgreen;
+    -fx-cursor: default;
+}
+.tree-table-row-cell .tree-table-cell {
+    -fx-text-fill: black;
+}
+.tree-table-row-cell .arrow {
+    -fx-background-color: black;
+}
+.tree-table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-table-cell-border-color: transparent;
+    -fx-border-width: 0 0 0 0;
+    -fx-cursor: default;
+}

@@ -32,7 +32,9 @@ public class FxApplication extends Application
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
         fxmlLoader.setControllerFactory(context::getBean);
 
-        primaryStage.setScene(new Scene(fxmlLoader.load()));
+        final Scene scene = new Scene(fxmlLoader.load());
+        scene.getStylesheets().add("/fxml/main.css");
+        primaryStage.setScene(scene);
         primaryStage.setTitle("Keeper");
         primaryStage.show();
     }
