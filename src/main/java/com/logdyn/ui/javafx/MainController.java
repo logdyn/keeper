@@ -72,11 +72,11 @@ public class MainController
             }
         });
         this.table.setShowRoot(false);
-        fillTable();
+        populateTable();
         setEvents();
     }
 
-    private void fillTable()
+    private void populateTable()
     {
         final TreeItem<Object> root = new TreeItem<>("repos");
         for (final Repository repository : repositoryController.getRepositories())
@@ -109,19 +109,9 @@ public class MainController
             e.consume();
         });
         this.table.setOnDragDropped(e -> {
-            if (e.getDragboard().hasUrl())
+            if (e.getDragboard().hasString())
             {
-                try
-                {
-                    final URL url = new URL(e.getDragboard().getUrl());
-                    this.repositoryController.getRepository(url)
-                            .ifPresent(r -> fillTable());
-                    e.setDropCompleted(true);
-                }
-                catch (final MalformedURLException ex)
-                {
-                    throw new UncheckedIOException(ex);
-                }
+                createTask(e.getDragboard().getString());
             }
             e.consume();
         });
@@ -129,47 +119,49 @@ public class MainController
         this.table.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.F5))
             {
-                fillTable();
+                populateTable();
             }
             else if (event.isControlDown() && event.getCode().equals(KeyCode.N))
             {
                 final TextInputDialog textInputDialog = new TextInputDialog();
                 textInputDialog.setContentText("enter url");
-                textInputDialog.showAndWait().ifPresent(s -> {
-                    final URL url;
-                    try
-                    {
-                        url = new URL(s);
-                    }
-                    catch (final MalformedURLException e)
-                    {
-                        throw new UncheckedIOException(e);
-                    }
-                    Optional<Task> task = Optional.empty();
-                    while (!task.isPresent())
-                    {
-                        try
-                        {
-                            task = this.repositoryController.getTask(url);
-                        }
-                        catch (final AuthenticationRequiredException e)
-                        {
-                            final Optional<? extends Authenticator> authenticator = new BasicAuthDialog().showAndWait();
-                            if (authenticator.isPresent())
-                            {
-                                this.repositoryController.getRepository(url).ifPresent(
-                                        r -> r.setAuthenticator(authenticator.get()));
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    task.ifPresent(t -> fillTable());
-                });
+                textInputDialog.showAndWait().ifPresent(this::createTask);
             }
             event.consume();
         });
+    }
+
+    private void createTask(final String s) {
+        final URL url;
+        try
+        {
+            url = new URL(s);
+        }
+        catch (final MalformedURLException e)
+        {
+            throw new UncheckedIOException(e);
+        }
+        Optional<Task> task = Optional.empty();
+        while (!task.isPresent())
+        {
+            try
+            {
+                task = this.repositoryController.getTask(url);
+            }
+            catch (final AuthenticationRequiredException e)
+            {
+                final Optional<? extends Authenticator> authenticator = new BasicAuthDialog().showAndWait();
+                if (authenticator.isPresent())
+                {
+                    this.repositoryController.getRepository(url).ifPresent(
+                            r -> r.setAuthenticator(authenticator.get()));
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        task.ifPresent(t -> populateTable());
     }
 }
