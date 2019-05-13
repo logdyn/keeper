@@ -74,7 +74,11 @@ public class RepositoryController {
     }
 
     public boolean addRepositories(final Collection<Repository> repositories) {
-        return this.repositories.addAll(repositories);
+        if (repositories != null) {
+            return this.repositories.addAll(repositories);
+        }
+
+        return false;
     }
 
     public boolean addRepository(final Repository repo){
